@@ -1,0 +1,7 @@
+odoo:
+    modules: []
+    src: https://github.com/OCA/ocb 10.0
+
+server-tools:
+    modules: [disable_odoo_online]
+    src: https://github.com/OCA/server-tools 10.0
