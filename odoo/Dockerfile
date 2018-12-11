@@ -1,4 +1,4 @@
-FROM camptocamp/odoo-project:11.0-latest
+FROM camptocamp/odoo-project:12.0-latest
 
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
