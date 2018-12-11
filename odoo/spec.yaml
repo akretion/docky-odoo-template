@@ -6,7 +6,7 @@ odoo:
     merges:
         -
             remote: oca
-            ref: "10.0"
+            ref: "11.0"
 
 -server-tools:
-    src: https://github.com/OCA/server-tools 10.0
+    src: https://github.com/OCA/server-tools 11.0

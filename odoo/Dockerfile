@@ -1,4 +1,4 @@
-FROM camptocamp/odoo-project:10.0-latest
+FROM camptocamp/odoo-project:11.0-latest
 
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
@@ -15,4 +15,4 @@ ENV LIST_DB=True
 #ENV DEMO=False
 ENV LIMIT_TIME_CPU=60000
 ENV LIMIT_TIME_REAL=120000
-ENV ADDONS_PATH=/odoo/local-src,/odoo/src/addons,/odoo/links
+ENV ADDONS_PATH=/odoo/local-src,/odoo/src/addons,/odoo/links,/odoo/external-src/server-tools
