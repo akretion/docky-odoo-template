@@ -8,5 +8,5 @@ odoo:
             remote: oca
             ref: "11.0"
 
--server-tools:
+server-tools:
     src: https://github.com/OCA/server-tools 11.0
