@@ -17,7 +17,7 @@ services:
       - LOCAL_USER_ID=$UID
       - DB_USER=odoo
       - DB_PASS=odoo
-      - DB_NAME=openupgrade-to-10
+      - DB_NAME=db
       - RUNNING_ENV=dev
       - MARABUNTA_MODE=demo
       - VIRTUAL_HOST=odoo.dy
