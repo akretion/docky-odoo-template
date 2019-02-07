@@ -18,6 +18,8 @@ services:
       - DB_USER=odoo
       - DB_PASS=odoo
       - DB_NAME=db
+      - LIST_DB=True
+      - DEMO=True
       - RUNNING_ENV=dev
       - MARABUNTA_MODE=demo
       - VIRTUAL_HOST=odoo.dy
