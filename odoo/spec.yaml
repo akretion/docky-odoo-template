@@ -1,12 +1,28 @@
 odoo:
-    defaults:
-        depth: 20
     remotes:
-        oca: https://github.com/OCA/OCB.git
+        oca: https://github.com/OCA/OCB
     merges:
-        -
-            remote: oca
-            ref: "10.0"
+        - oca 10.0
 
 server-tools:
     src: https://github.com/OCA/server-tools 10.0
+
+fiscal-rule:
+    src: https://github.com/OCA/account-fiscal-rule 10.0
+
+reporting-engine:
+    src: https://github.com/OCA/reporting-engine 10.0
+
+bank-payment:
+    src: https://github.com/OCA/bank-payment 10.0
+
+l10n-brazil:
+    remotes:
+        oca: https://github.com/OCA/l10n-brazil
+        ak: https://github.com/akretion/l10n-brazil.git
+    merges:
+        - oca 10.0
+        - ak 10.0-migrate_l10n_br_account_product
+
+web:
+    src: https://github.com/OCA/web 10.0

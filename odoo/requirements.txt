@@ -1,0 +1,12 @@
+unidecode==0.04.20
+suds==0.4
+num2words==0.5.4
+# TODO - https://github.com/OCA/l10n-brazil/issues/669
+sh
+signxml
+reportlab
+qrcode
+py3o.template
+-e git://github.com/odoo-brazil/pybrasil.git#egg=PySPED
+-e git://github.com/odoo-brazil/geraldo.git#egg=geraldo
+-e git://github.com/odoo-brazil/PySPED.git@10.0#egg=pybrasil

@@ -25,4 +25,4 @@ ENV LIST_DB=True
 ENV DEMO=True
 ENV LIMIT_TIME_CPU=60000
 ENV LIMIT_TIME_REAL=120000
-ENV ADDONS_PATH=/odoo/local-src,/odoo/src/addons,/odoo/links,/odoo/external-src/server-tools
+ENV ADDONS_PATH=/odoo/local-src,/odoo/src/addons,/odoo/links,/odoo/external-src/server-tools,/odoo/external-src/web,/odoo/external-src/reporting-engine,/odoo/external-src/fiscal-rule,/odoo/external-src/l10n-brazil,/odoo/external-src/bank-payment
