@@ -4,9 +4,7 @@ odoo:
     remotes:
         oca: https://github.com/OCA/OCB.git
     merges:
-        -
-            remote: oca
-            ref: "10.0"
+        - oca 10.0
 
 server-tools:
     src: https://github.com/OCA/server-tools 10.0
