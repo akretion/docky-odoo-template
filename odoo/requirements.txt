@@ -1,0 +1,11 @@
+unidecode==0.04.20
+suds==0.4
+num2words==0.5.4
+sh
+signxml
+qrcode
+py3o.template
+-e git://github.com/odoo-brazil/pyxmlsec.git#egg=pyxmlsec
+-e git://github.com/odoo-brazil/geraldo.git#egg=geraldo
+-e git://github.com/odoo-brazil/pybrasil.git#egg=pybrasil
+-e git://github.com/odoo-brazil/PySPED.git@10.0#egg=pybrasil
