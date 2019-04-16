@@ -1,5 +1,9 @@
 FROM camptocamp/odoo-project:10.0-3.1.2
 
+RUN echo "deb [check-valid-until=no] http://archive.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
+    && sed -i '/deb http:\/\/deb.debian.org\/debian jessie-updates main/d' /etc/apt/sources.list \
+    && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf;
+
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y git vim && \
@@ -7,6 +11,10 @@ RUN DEBIAN_FRONTEND=noninteractive && \
 
 COPY ./src /odoo/src
 RUN pip install -e /odoo/src
+
+RUN apt-get clean && apt-get update && apt-get install -y locales
+RUN locale-gen pt_BR.UTF-8 && \
+     sed -i 's/^# *\(pt_BR.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
 COPY ./requirements.txt /odoo/requirements.txt
 RUN pip install -r /odoo/requirements.txt
