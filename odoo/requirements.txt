@@ -1,0 +1,55 @@
+#git+https://github.com/akretion/locomotivecms-python-client@master#egg=locomotivecms
+#git+https://github.com/cheah/adyen-cse-python@master#egg=adyen-cse-python
+#gevent==1.1.2
+python-openid
+openpyxl
+natsort
+ptipython
+ipython
+raven
+pyusb==1.0.2
+serial
+netifaces
+anthem  # also used in custom module (helpers)
+cachetools
+click-odoo
+click-odoo-contrib
+cryptography
+gspread
+invoice2data
+nose
+ofxparse
+oauth2client
+oca-decorators
+openerp-client-lib == 1.1.2
+passlib == 1.7.1
+Pillow
+phonenumbers
+premailer
+pydot
+pyOpenSSL
+PyPDF2
+python-chart
+python-dateutil == 2.4.0
+python-slugify
+qrcode == 5.3
+raven
+requests
+reportlab
+roulier == 0.3.3
+simplejson
+slug
+slugify
+timeout_decorator
+unicodecsv
+unidecode
+viivakoodi  # barcode
+watchdog
+xlsxwriter
+xlrd
+xlwt
+# openupgradelib
+-e git+https://github.com/OCA/openupgradelib.git#egg=openupgradelib
+# version required for google connector
+# oauth2client = 1.5.1
+ipdb==0.12

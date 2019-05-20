@@ -1,8 +1,8 @@
-FROM camptocamp/odoo-project:12.0-latest
+FROM camptocamp/odoo-project:12.0-3.1.2-batteries
 
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y git && \
+    apt-get install --no-install-recommends vim wget -y git && \
     apt-get clean
 
 COPY . /odoo

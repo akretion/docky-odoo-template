@@ -10,3 +10,206 @@ odoo:
 
 server-tools:
     src: https://github.com/OCA/server-tools 12.0
+ 
+account-financial-tools:
+    useless: [account_chart_update,sale_timesheet_invoice_description,account_renumber,account_move_fiscal_year,
+              account_invoice_constraint_chronology,account_move_line_tax_editable,account_partner_required,
+              account_lock_date_update]
+    modules: [account_balance_line,account_check_deposit,account_fiscal_year,account_group_menu,
+              account_tag_menu,account_type_menu]
+    src: https://github.com/oca/account-financial-tools 12.0
+
+account-invoicing:
+    useless: [sale_timesheet_invoice_description,account_invoice_force_number,
+              account_invoice_triple_discount,account_invoice_change_currency,
+              account_invoice_check_total,account_invoice_line_description,
+              account_invoice_fiscal_position_update,
+              account_invoice_refund_link, account_invoice_search_by_reference,
+              account_payment_term_extension]
+    modules: [account_invoice_pricelist]
+    src: https://github.com/oca/account-invoicing 12.0
+
+account-payment:
+    modules: [account_payment_return, account_due_list, account_payment_return_import,
+              account_payment_return_import_sepa_pain,account_payment_show_invoice,
+              account_payment_credit_card]
+    src: https://github.com/oca/account-payment 12.0
+
+account-reconcile:
+    useless: [base_transaction_id,account_partner_reconcile]
+    modules: []
+    src: https://github.com/oca/account-reconcile 12.0
+
+community-data-files:
+    useless: [base_currency_iso_4217,uom_unece,account_tax_unece,account_payment_unece]
+    modules: [base_iso3166,base_bank_from_iban, base_unece]
+    src: https://github.com/oca/community-data-files 12.0
+
+connector:
+    modules: [component,component_event,connector,connector_base_product,
+              test_connector, test_component]
+    src: https://github.com/oca/connector 12.0
+
+l10n-france:
+    useless: [l10n_fr_account_tax_unece,account_balance_ebp_csv_export,account_bank_statement_import_fr_cfonb]
+    modules: [l10n_fr_department,l10n_fr_department_oversea,l10n_fr_siret,l10n_fr_state]
+    src: https://github.com/oca/l10n-france 12.0
+
+logistics-center:
+    modules: [logistics_center,stef_logistics]
+    src: https://github.com/akretion/logistics-center.git 12.0
+
+multi-comp-purch:
+    modules: [purchase_sale_inter_company]
+    src: https://github.com/akretion/multi-company 12-interc-sale-port
+
+multi-company:
+    modules: [account_invoice_inter_company]
+    src: https://github.com/akretion/multi-company 12-invoice-intercpny
+
+muk_web:
+    modules: [muk_web_utils,muk_web_preview,muk_web_preview_opendocument]
+    src: https://github.com/muk-it/muk_web 12.0
+
+muk_base:
+    modules: [muk_autovacuum,muk_utils]
+    src: https://github.com/muk-it/muk_base 12.0
+
+pos:
+    modules: [pos_category_multi,pos_debranding,
+              pos_longpolling,pos_mobile,pos_mobile_restaurant,pos_multi_session,
+              pos_multi_session_restaurant,pos_multi_session_sync,pos_order_note,
+              pos_restaurant_base,pos_invoice_pay,hw_printer_network,pos_printer_network]
+    src: https://github.com/it-projects-llc/pos-addons 12.0
+
+pos-oca:
+    useless: []
+    modules: [pos_access_right,pos_ticket_logo]
+    src: https://github.com/oca/pos 12.0
+
+product-attribute:
+    useless: [stock_production_lot_firmware_version,product_manufacturer,product_multi_category,
+              product_brand,product_template_tags, product_supplierinfo_revision]
+    modules: [base_product_mass_addition,product_code_unique,product_secondary_unit,product_pricelist_direct_print]
+    src: https://github.com/oca/product-attribute 12.0
+
+purchase-workflow:
+    modules: [purchase_delivery_split_date,purchase_order_archive]
+    src: https://github.com/oca/purchase-workflow 12.0
+
+purchase-quick:
+    modules: [purchase_quick]
+    src: https://github.com/akretion/purchase-workflow 12-quick_purchase
+
+purchase-except:
+    modules: [purchase_exception]
+    src: https://github.com/sudhir-erpharbor/purchase-workflow 12.0-purchase_exception
+
+queue:
+    useless: [test_queue_job,queue_job_cron]
+    modules: [queue_job]
+    src: https://github.com/oca/queue 12.0
+
+reporting-engine:
+    useless: [report_py3o,report_py3o_fusion_server]
+    modules: [report_xlsx,bi_sql_editor]
+    src: https://github.com/oca/reporting-engine 12.0
+
+report_weasyprint:
+    modules: [report_qweb_custom_renderer,report_qweb_weasyprint_renderer]
+    src: https://github.com/hbrunn/reporting-engine 12.0-report_qweb_weasyprint_renderer
+
+sale-workflow:
+    modules: []
+    src: https://github.com/oca/sale-workflow 12.0
+
+sale-wk-recpt:
+    modules: [sale_recompute_price]
+    src: https://github.com/akretion/sale-workflow 12-sale-update-line
+
+sale-wk-updprice:
+    modules: [sale_order_price_recalculation]
+    src: https://github.com/rven/sale-workflow 12.0-mig-sale_order_price_recalculation
+
+sale-exc:
+    modules: [sale_exception]
+    src: https://github.com/sebalix/sale-workflow 12.0-mig-sale_exception
+
+server-ux:
+    modules: [date_range,mass_editing,base_technical_features]
+    src: https://github.com/oca/server-ux 12.0
+
+server-backend:
+    modules: [base_import_match,base_user_role,base_suspend_security]
+    src: https://github.com/oca/server-backend 12.0
+
+server-tools:
+    useless: [auditlog,html_text,html_image_url_extractor,module_auto_update,
+              datetime_formatter,base_search_fuzzy,base_jsonify]
+    modules: [base_exception,base_technical_user,scheduler_error_mailer,
+              sentry,sql_request_abstract,sql_export,
+              excel_import_export,excel_import_export_demo]
+    src: https://github.com/oca/server-tools 12.0
+
+serv-too-cleanup:
+    modules: [database_cleanup]
+    src: https://github.com/mart-e/server-tools 12.0-mig-database_cleanup
+
+serv-too-view_inherit:
+    modules: [base_view_inheritance_extension]
+    src: https://github.com/akretion/server-tools 12.0-mig-base_view_inheritance_extension
+
+stock-logistics-warehouse:
+    modules: [stock_request,stock_secondary_unit]
+    useless: [stock_inventory_chatter,stock_orderpoint_move_link,stock_orderpoint_uom,
+              stock_orderpoint_manual_procurement,stock_orderpoint_purchase_link,
+              account_move_line_stock_info,account_move_line_product]
+    src: https://github.com/oca/stock-logistics-warehouse 12.0
+
+stock-logistics-workflow:
+    modules: [stock_split_picking,stock_picking_sale_order_link,stock_picking_show_return,
+              stock_picking_show_backorder]
+    src: https://github.com/oca/stock-logistics-workflow 12.0
+
+stock-wk-except:
+    modules: [stock_picking_exception]
+    src: https://github.com/akretion/stock-logistics-workflow 12pick-except
+
+stock-wk-pick-quick:
+    modules: [stock_picking_quick]
+    src: https://github.com/akretion/stock-logistics-workflow 12-picking_quick
+
+stock-logistics-barcode:
+    modules: [mobile_app_abstract,mobile_app_angular,mobile_app_picking]
+    src: https://github.com/legalsylvain/stock-logistics-barcode 11.0_ADD_mobile_app_picking
+
+stock-wh-unreserved:
+    modules: [stock_available_unreserved]
+    src: https://github.com/Jarsa-dev/stock-logistics-warehouse 12.0-mig-stock_available_unreserved
+
+usability:
+    useless: [sale_quotation_title,purchase_stock_usability,
+              partner_tree_default,mrp_average_cost,product_manager_group,base_partner_ref,
+              intrastat_product_type,stock_account_usability,product_manager_group_stock]
+    modules: [sale_usability,account_usability,base_usability,purchase_usability,product_usability,
+              developer_menu,sale_stock_usability,stock_usability,base_company_extension,
+              sale_purchase_no_product_template_menu,mrp_usability,company_code,
+              mrp_no_product_template_menu,pos_no_product_template_menu,volume_precision]
+    src: https://github.com/akretion/odoo-usability 12.0
+
+web:
+    useless:  [web_widget_x2many_2d_matrix_example, web_decimal_numpad_dot,
+               web_ir_actions_act_view_reload, web_ir_actions_act_multi,
+               web_searchbar_full_width,web_tree_duplicate,web_widget_color]
+    modules: [web_environment_ribbon,web_favicon,web_disable_export_group,
+              web_listview_range_select,web_notify,web_timeline,
+              web_widget_image_download,web_widget_x2many_2d_matrix,
+              web_responsive,web_dialog_size,web_m2x_options,web_advanced_search,
+              web_edit_user_filter,web_widget_many2many_tags_multi_selection,
+              web_group_by_percentage]
+    src: https://github.com/oca/web 12.0
+
+web-theme:
+    modules: [backend_theme_v12]
+    src: https://github.com/Openworx/backend_theme.git 12.0
+
