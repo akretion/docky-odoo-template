@@ -63,6 +63,10 @@ multi-comp-purch:
     modules: [purchase_sale_inter_company]
     src: https://github.com/akretion/multi-company 12-interc-sale-port
 
+oca-project:
+    modules: [project_timeline,project_timeline_hr_timesheet]
+    src: https://github.com/oca/project 12.0
+
 multi-company:
     modules: [account_invoice_inter_company]
     src: https://github.com/akretion/multi-company 12-invoice-intercpny
@@ -130,10 +134,6 @@ sale-wk-recpt:
 sale-wk-updprice:
     modules: [sale_order_price_recalculation]
     src: https://github.com/rven/sale-workflow 12.0-mig-sale_order_price_recalculation
-
-sale-exc:
-    modules: [sale_exception]
-    src: https://github.com/sebalix/sale-workflow 12.0-mig-sale_exception
 
 server-ux:
     modules: [date_range,mass_editing,base_technical_features]
