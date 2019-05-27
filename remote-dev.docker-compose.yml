@@ -6,18 +6,25 @@ services:
   odoo:
     build: odoo
     environment:
-      - VIRTUAL_HOST=
-      - VIRTUAL_PORT=8069
+      - PYTHONDONTWRITEBYTECODE=True
       - LOCAL_USER_ID=$UID
-      - DB_HOST=$PGHOST
+      - DB_HOST=$DOCKY_PGHOST
       - DB_USER=$PGUSER
       - DB_PASSWORD=$PGPASSWORD
-      - DB_NAME=$PGDATABASE
+      - DB_NAME=atoutcoffrage
+      - ADMIN_PASSWD=atoutadmin
+      - LIST_DB=True
       - RUNNING_ENV=dev
       - MARABUNTA_MODE=demo
+      - DEMO=True
+      - VIRTUAL_HOST=atoutcoffrage.dev.akretion.com
+      - VIRTUAL_PORT=8069
+      - WORKERS=0
+      - OPENERP_SERVER=/etc/odoo.cfg
+      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/external-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
     volumes:
-      - ./odoo:/opt/odoo
-      - ./data/addons:/data/odoo/addons
-      - ./data/filestore:/data/odoo/filestore
-      - ./data/sessions:/data/odoo/sessions
+      - ./odoo:/odoo
+      - $HOME/data/addons:/data/odoo/addons
+      - $HOME/data/filestore:/data/odoo/filestore
+      - $HOME/data/sessions:/data/odoo/sessions
 version: '3'

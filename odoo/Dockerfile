@@ -6,13 +6,10 @@ RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get clean
 
 COPY . /odoo
+COPY etc/odoo.cfg.tmpl /etc/odoo.cfg.tmpl
 RUN pip install -r /odoo/requirements.txt
 RUN pip install -e /odoo
 RUN pip install -e /odoo/src
 
+CMD ["odoo"]
 
-ENV LIST_DB=True
-#ENV DEMO=False
-ENV LIMIT_TIME_CPU=60000
-ENV LIMIT_TIME_REAL=120000
-ENV ADDONS_PATH=/odoo/local-src,/odoo/src/addons,/odoo/links,/odoo/external-src/server-tools
