@@ -1,4 +1,9 @@
-FROM camptocamp/odoo-project:9.0-latest
+FROM camptocamp/odoo-project:10.0-3.1.2
+
+RUN DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y git vim && \
+    apt-get clean
 
 COPY ./src /odoo/src
 RUN pip install -e /odoo/src
