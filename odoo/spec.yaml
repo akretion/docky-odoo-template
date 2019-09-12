@@ -1,7 +1,7 @@
 odoo:
     modules: []
-    src: https://github.com/OCA/ocb 10.0
+    src: https://github.com/oca/ocb 12.0
 
 server-tools:
     modules: [disable_odoo_online]
-    src: https://github.com/OCA/server-tools 10.0
+    src: https://github.com/oca/server-tools 12.0
