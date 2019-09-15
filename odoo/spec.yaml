@@ -1,7 +1,168 @@
 odoo:
-    modules: []
-    src: https://github.com/oca/ocb 12.0
+    prebuild: True
+
+account-financial-reporting:
+    prebuild: True
+
+account-financial-tools:
+    prebuild: True
+
+account-fiscal-rule:
+    prebuild: True
+
+account-invoice-reporting:
+    prebuild: True
+
+account-invoicing:
+    prebuild: True
+
+account-payment:
+    prebuild: True
+
+account-reconcile:
+    prebuild: True
+
+bank-payment:
+    prebuild: True
+
+bank-statement-import:
+    prebuild: True
+
+community-data-files:
+    prebuild: True
+
+connector:
+    prebuild: True
+
+connector-ecommerce:
+    prebuild: True
+
+connector-telephony:
+    prebuild: True
+
+contract:
+    prebuild: True
+
+crm:
+    prebuild: True
+
+delivery-carrier:
+    prebuild: True
+
+e-commerce:
+    prebuild: True
+
+edi:
+    prebuild: True
+
+hr:
+    prebuild: True
+
+hr-timesheet:
+    prebuild: True
+
+intrastat:
+    prebuild: True
+
+l10n-france:
+    prebuild: True
+
+manufacture:
+    prebuild: True
+
+partner-contact:
+    prebuild: True
+
+pos:
+    prebuild: True
+
+product-attribute:
+    prebuild: True
+
+product-variant:
+    prebuild: True
+
+project:
+    prebuild: True
+
+project-reporting:
+    prebuild: True
+
+purchase-reporting:
+    prebuild: True
+
+purchase-workflow:
+    prebuild: True
+
+queue:
+    prebuild: True
+
+reporting-engine:
+    prebuild: True
+
+rest-framework:
+    prebuild: True
+
+sale-financial:
+    prebuild: True
+
+sale-reporting:
+    prebuild: True
+
+sale-workflow:
+    prebuild: True
+
+search-engine:
+    prebuild: True
+
+server-auth:
+    prebuild: True
 
 server-tools:
-    modules: [disable_odoo_online]
-    src: https://github.com/oca/server-tools 12.0
+    prebuild: True
+
+social:
+    prebuild: True
+
+stock-logistics-barcode:
+    prebuild: True
+
+stock-logistics-reporting:
+    prebuild: True
+
+stock-logistics-warehouse:
+    prebuild: True
+
+stock-logistics-workflow:
+    prebuild: True
+
+web:
+    prebuild: True
+
+# Shopinvader Repository
+shopinvader:
+    prebuild: True
+
+shopinvader-pim:
+    prebuild: True
+
+shopinvader-payment:
+    prebuild: True
+
+shopinvader-misc:
+    prebuild: True
+
+# Storage from Akretion (soon in OCA)
+storage:
+    prebuild: True
+
+# Akretion generic dependency
+
+bank-statement-reconcile-simple:
+    prebuild: True
+
+odoo-usuability:
+    prebuild: True
+
+profiloo:
+    prebuild: True
