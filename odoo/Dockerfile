@@ -1,5 +1,5 @@
 # https://hub.docker.com/r/camptocamp/odoo-project
-FROM quay.io/akretion/odoo-prebuild:12.0-20190915
+FROM quay.io/akretion/odoo-prebuild:12.0-20190916-01
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends vim wget git

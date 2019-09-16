@@ -16,6 +16,7 @@ services:
       - DB_NAME=db
       - RUNNING_ENV=$ENV
       - MARABUNTA_MODE=demo
+      - MARABUNTA_MIGRATION_FILE=/odoo/migration/migration.yml
     hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
     labels:
       docky.access.help: http://${COMPOSE_PROJECT_NAME}.dy
@@ -27,7 +28,11 @@ services:
     links:
       - db
     volumes:
-      - ./odoo:/odoo
+      - ./odoo/local-src:/odoo/local-src
+      - ./odoo/external-src:/odoo/external-src
+      - ./odoo/links:/odoo/links
+      - ./odoo/songs:/odoo/songs
+      - ./odoo/migration:/odoo/migration
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
