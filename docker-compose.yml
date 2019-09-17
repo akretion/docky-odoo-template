@@ -1,11 +1,4 @@
 services:
-  db:
-    environment:
-      - POSTGRES_USER=odoo
-      - POSTGRES_DB=db
-    image: quay.io/akretion/postgresql:10
-    volumes:
-      - .db/:/var/lib/postgresql/data
   odoo:
     build: odoo
     environment:
@@ -16,16 +9,12 @@ services:
       - DB_NAME=db
       - RUNNING_ENV=$ENV
       - MARABUNTA_MODE=demo
+      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons
     hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
     labels:
       docky.access.help: http://${COMPOSE_PROJECT_NAME}.dy
       docky.main.service: true
       docky.user: odoo
-      traefik.enable: true
-      traefik.www.frontend.rule: Host:${COMPOSE_PROJECT_NAME}.dy
-      traefik.longpolling.frontend.rule: Host:${COMPOSE_PROJECT_NAME}.dy;PathPrefix:/longpolling/
-    links:
-      - db
     volumes:
       - ./odoo:/odoo
       - ./data/addons:/data/odoo/addons
