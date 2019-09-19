@@ -1,23 +1,22 @@
-networks:
-  default:
-    external:
-      name: dy
 services:
   odoo:
     build: odoo
     environment:
-      - VIRTUAL_HOST=
-      - VIRTUAL_PORT=8069
-      - LOCAL_USER_ID=$UID
       - DB_HOST=$PGHOST
       - DB_USER=$PGUSER
       - DB_PASSWORD=$PGPASSWORD
       - DB_NAME=$PGDATABASE
-      - RUNNING_ENV=dev
+      - RUNNING_ENV=remote-dev
       - MARABUNTA_MODE=demo
     volumes:
-      - ./odoo:/opt/odoo
+      - ./odoo:/odoo
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
-version: '3'
+    labels:
+        traefik.enable: true
+        traefik.www.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.dev.akretion.com
+        traefik.longpolling.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.dev.akretion.com;PathPrefix:/longpolling/
+        docky.access.help: https://${COMPOSE_PROJECT_NAME}.dev.akretion.com
+version: '3.7'
+
