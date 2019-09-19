@@ -2,17 +2,7 @@ services:
   odoo:
     build: odoo
     environment:
-      - DB_HOST=$PGHOST
-      - DB_USER=$PGUSER
-      - DB_PASSWORD=$PGPASSWORD
-      - DB_NAME=$PGDATABASE
-      - RUNNING_ENV=remote-dev
       - MARABUNTA_MODE=demo
-    volumes:
-      - ./odoo:/odoo
-      - ./data/addons:/data/odoo/addons
-      - ./data/filestore:/data/odoo/filestore
-      - ./data/sessions:/data/odoo/sessions
     labels:
         traefik.enable: true
         traefik.www.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.dev.akretion.com
