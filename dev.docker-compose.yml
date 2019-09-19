@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 networks:
   local:
   traefik:
@@ -6,8 +6,8 @@ networks:
 services:
   db:
     environment:
-      - POSTGRES_USER=odoo
-      - POSTGRES_DB=db
+      - POSTGRES_USER=$PGUSER
+      - POSTGRES_DB=$PGDATABASE
     image: quay.io/akretion/postgresql:10
     volumes:
       - .db/:/var/lib/postgresql/data
@@ -16,19 +16,11 @@ services:
   odoo:
     build: odoo
     environment:
-      - PYTHONDONTWRITEBYTECODE=True
-      - LOCAL_USER_ID=$UID
-      - DB_USER=odoo
-      - DB_PASS=odoo
-      - DB_NAME=db
       - DEMO=True
       - MARABUNTA_MODE=demo
       - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
-    hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
     labels:
       docky.access.help: http://${COMPOSE_PROJECT_NAME}.dy
-      docky.main.service: true
-      docky.user: odoo
       traefik.enable: true
       traefik.docker.network: traefik
       traefik.www.frontend.rule: Host:${COMPOSE_PROJECT_NAME}.dy
@@ -38,5 +30,3 @@ services:
     networks:
       - local
       - traefik
-volumes:
-  py3o_tmp: null
