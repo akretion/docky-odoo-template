@@ -1,6 +1,5 @@
 services:
   odoo:
-    build: odoo
     environment:
       - PYTHONDONTWRITEBYTECODE=True
       - LOCAL_USER_ID=$UID
