@@ -1,6 +1,6 @@
 services:
   odoo:
-    build: odoo
+    build: odoo # at term, CI should build it for us
     environment:
       - MARABUNTA_MODE=demo
     labels:
