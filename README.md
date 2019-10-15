@@ -1,7 +1,34 @@
-# Ak recipe for ShopInvader project 
+# Ak recipe for basic odoo project
 
-Clone it
 
-Define your repository as virtual environement
+Download this project or can Git clone and remove .git
+```sh
+$ git clone https://github.com/akretion/docky-odoo-template  odoo_project
+odoo_project $ cd odoo_project
+odoo_project $ rm -rf .git
+```
 
-Then go to https://github.com/akretion/ak/wiki
+Create a .env
+```sh
+odoo_project $ docky init
+```
+
+The .env is a docker-compose file where you can put environment variables.
+
+Ensure docker-compose is well configured
+```sh
+odoo_project $ docker-compose config
+```
+
+Install and run ak: 
+```sh
+odoo_project $ cd odoo
+odoo_project/odoo $ ak build
+```
+
+Run docky
+```sh
+odoo_project $ docky run
+```
+
+See ak and docky documentation for more help.
