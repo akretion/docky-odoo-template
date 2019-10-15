@@ -4,9 +4,12 @@ services:
     environment:
       - MARABUNTA_MODE=demo
     labels:
-        traefik.enable: true
-        traefik.www.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.dev.akretion.com
-        traefik.longpolling.frontend.rule=Host:${COMPOSE_PROJECT_NAME}.dev.akretion.com;PathPrefix:/longpolling/
-        docky.access.help: https://${COMPOSE_PROJECT_NAME}.dev.akretion.com
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`) && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=odoo"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=odoo_long"
+      - "traefik.http.services.odoo.loadbalancer.server.port=8069"
+      - "traefik.http.services.odoo_long.loadbalancer.server.port=8072"
 version: '3.7'
-

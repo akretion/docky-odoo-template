@@ -6,8 +6,8 @@ networks:
 services:
   db:
     environment:
-      - POSTGRES_USER=$PGUSER
-      - POSTGRES_DB=$PGDATABASE
+      - PGUSER=$PGUSER
+      - PGDATABASE=$PGDATABASE
     image: quay.io/akretion/postgresql:10
     volumes:
       - .db/:/var/lib/postgresql/data
@@ -18,13 +18,18 @@ services:
     environment:
       - DEMO=True
       - MARABUNTA_MODE=demo
-      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
+      # you can specify your own addons path, if you don't want to use links
+      # - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
     labels:
-      docky.access.help: http://${COMPOSE_PROJECT_NAME}.dy
-      traefik.enable: true
-      traefik.docker.network: traefik
-      traefik.www.frontend.rule: Host:${COMPOSE_PROJECT_NAME}.dy
-      traefik.longpolling.frontend.rule: Host:${COMPOSE_PROJECT_NAME}.dy;PathPrefix:/longpolling/
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`) && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=odoo"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=odoo_long"
+      - "traefik.http.services.odoo.loadbalancer.server.port=8069"
+      - "traefik.http.services.odoo_long.loadbalancer.server.port=8072"
+      - "docky.access.help=${COMPOSE_PROJECT_NAME}.localhost"
     links:
       - db
     networks:
