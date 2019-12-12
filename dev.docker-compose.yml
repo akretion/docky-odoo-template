@@ -6,8 +6,8 @@ networks:
 services:
   db:
     environment:
-      - PGUSER=$PGUSER
-      - PGDATABASE=$PGDATABASE
+      - POSTGRES_USER=$PGUSER
+      - POSTGRES_DB=$PGDATABASE
     image: quay.io/akretion/postgresql:10
     volumes:
       - .db/:/var/lib/postgresql/data
