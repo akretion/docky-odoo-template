@@ -6,8 +6,8 @@ networks:
 services:
   db:
     environment:
-      - POSTGRES_USER=$PGUSER
-      - POSTGRES_DB=$PGDATABASE
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=db
     image: quay.io/akretion/postgresql:10
     volumes:
       - .db/:/var/lib/postgresql/data
@@ -18,6 +18,11 @@ services:
     environment:
       - DEMO=True
       - MARABUNTA_MODE=demo
+      - DB_HOST=db
+      - DB_USER=odoo
+      - DB_PASS=odoo
+      - DB_NAME=db
+
       # you can specify your own addons path, if you don't want to use links
       # - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
     labels:
