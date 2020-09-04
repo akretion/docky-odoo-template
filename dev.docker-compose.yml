@@ -34,7 +34,16 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
-      - "docky.access.help=${COMPOSE_PROJECT_NAME}.localhost"
+      - "docky.help=http://${COMPOSE_PROJECT_NAME}.localhost"
+    volumes:
+      - ./odoo/local-src:/odoo/local-src
+      - ./odoo/external-src:/odoo/external-src
+      - ./odoo/src:/odoo/src
+      - ./odoo/links:/odoo/links
+      - ./odoo/script:/odoo/script
+      - ./data/addons:/data/odoo/addons
+      - ./data/filestore:/data/odoo/filestore
+      - ./data/sessions:/data/odoo/sessions
     links:
       - db
     networks:
