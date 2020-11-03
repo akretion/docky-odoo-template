@@ -3,7 +3,7 @@
 
 Download this project files:
 ```sh
-$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz --transform 's/akretion-docky-odoo-template-.*/odoo_project/'^C
+$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz --transform 's/akretion-docky-odoo-template-.*/odoo_project/'
 ```
 
 Create a .env
