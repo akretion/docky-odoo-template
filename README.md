@@ -1,11 +1,9 @@
 # Ak recipe for basic odoo project
 
 
-Download this project or can Git clone and remove .git
+Download this project files:
 ```sh
-$ git clone https://github.com/akretion/docky-odoo-template  odoo_project
-odoo_project $ cd odoo_project
-odoo_project $ rm -rf .git
+$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz --transform 's/akretion-docky-odoo-template-.*/odoo_project/'^C
 ```
 
 Create a .env
@@ -20,7 +18,7 @@ Ensure docker-compose is well configured
 odoo_project $ docker-compose config
 ```
 
-Install and run ak: 
+Install and run ak in odoo folder: 
 ```sh
 odoo_project $ cd odoo
 odoo_project/odoo $ ak build
