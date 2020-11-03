@@ -3,11 +3,13 @@
 
 Download this project files:
 ```sh
-$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz --transform 's/akretion-docky-odoo-template-.*/odoo_project/'
+$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz
+$ mv akretion-docky-odoo-template-* odoo_project
 ```
 
 Create a .env
 ```sh
+$ cd odoo_project
 odoo_project $ docky init
 ```
 
