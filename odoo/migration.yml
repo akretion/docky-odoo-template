@@ -5,7 +5,7 @@ migration:
     - version: 2018.06.30
       operations:
         pre:
-          - "sh -c 'psql -c \"CREATE EXTENSION pg_trgm;\"'"
+          - "sh -c 'psql -c \"CREATE EXTENSION IF NOT EXISTS pg_trgm;\"'"
         post:
           - anthem songs.install.base::main
       addons:
