@@ -1,0 +1,1 @@
+click-odoo-contrib==1.10.1

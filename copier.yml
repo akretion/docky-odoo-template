@@ -1,0 +1,18 @@
+project_name: "" 
+env: 
+  type: str
+  default: dev
+uid: 
+  type: int
+PGHOST:
+  type: str
+  default: db
+PGDATABASE:
+  type: str
+  default: db
+PGUSER:
+  type: str
+  default: odoo
+PGPASSWORD:
+  type: str
+  default: odoo
