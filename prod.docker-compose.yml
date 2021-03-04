@@ -12,6 +12,7 @@ services:
       - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons
       - ODOO_BASE_URL=
       - SENTRY=True
+      - SENTRY_DSN=
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`)"
