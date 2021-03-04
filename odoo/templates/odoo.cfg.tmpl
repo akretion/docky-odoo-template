@@ -1,0 +1,50 @@
+[options]
+addons_path = {{ .Env.ADDONS_PATH }}
+data_dir = /data/odoo
+auto_reload = False
+db_host = {{ .Env.DB_HOST }}
+db_name = {{ .Env.DB_NAME }}
+dbfilter = {{ .Env.DB_NAME }}
+db_user = {{ .Env.DB_USER }}
+db_password = {{ .Env.DB_PASSWORD }}
+admin_passwd = {{ default .Env.ADMIN_PASSWD "" }}
+db_maxconn = {{ default .Env.DB_MAXCONN "64" }}
+limit_memory_soft = {{ default .Env.LIMIT_MEMORY_SOFT "2147483648" }}
+limit_memory_hard = {{ default .Env.LIMIT_MEMORY_HARD "2684354560" }}
+limit_request = {{ default .Env.LIMIT_REQUEST "8192" }}
+limit_time_cpu = {{ default .Env.LIMIT_TIME_CPU "60" }}
+limit_time_real = {{ default .Env.LIMIT_TIME_REAL "120" }}
+log_handler = {{ default .Env.LOG_HANDLER "':INFO'" }}
+log_level = {{ default .Env.LOG_LEVEL "info" }}
+max_cron_threads = {{ default .Env.MAX_CRON_THREADS "2" }}
+workers = {{ default .Env.WORKERS "4" }}
+logfile = {{ default .Env.LOGFILE "None" }}
+log_db = {{ default .Env.LOG_DB "False" }}
+logrotate = True
+syslog = {{ default .Env.SYSLOG "False" }}
+running_env = {{ default .Env.RUNNING_ENV "dev" }}
+without_demo = {{ default .Env.WITHOUT_DEMO "True" }}
+server_wide_modules = {{ default .Env.SERVER_WIDE_MODULES "" }}
+unaccent = True
+sentry_enabled = {{ default .Env.SENTRY "False" }}
+sentry_logging_level = warn
+sentry_exclude_loggers = werkzeug
+sentry_ignore_exceptions = odoo.exceptions.AccessDenied,odoo.exceptions.AccessError,odoo.exceptions.MissingError,odoo.exceptions.RedirectWarning,odoo.exceptions.UserError,odoo.exceptions.ValidationError,odoo.exceptions.Warning,odoo.exceptions.except_orm
+sentry_processors = raven.processors.SanitizePasswordsProcessor,odoo.addons.sentry.logutils.SanitizeOdooCookiesProcessor
+sentry_transport = threaded
+sentry_include_context = true
+sentry_environment = {{ default .Env.RUNNING_ENV "dev" }}
+sentry_auto_log_stacks = false
+sentry_odoo_dir = /odoo/src/odoo/
+sentry_dsn = {{ default .Env.SENTRY_DSN "" }}
+encryption_key_dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
+encryption_key_remote-dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
+encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
+
+[outgoing_mail]
+smtp_host = {{ default .Env.SMTP_HOST "localhost"}}
+smtp_port = 587
+
+[ir.config_parameter]
+google_calendar_client_id = {{ default .Env.GOOGLE_CALENDAR_CLIENT_ID "Change me in .env" }}
+google_calendar_client_secret = {{ default .Env.GOOGLE_CALENDAR_CLIENT_SECRET "Change me in .env" }}
