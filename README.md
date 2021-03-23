@@ -31,6 +31,7 @@ ak build
 > [ak](https://github.com/akretion/ak) use the [git-aggregator](https://github.com/acsone/git-aggregator) tool by [Acsone](https://www.acsone.eu/).
 > More information on the [git-aggregator](https://github.com/acsone/git-aggregator) repo to understand how to fill the [spec.yaml](odoo/spec.yaml) file.
 
+
 5. Once all the code is downloaded, go back to your project's root folder and launch `docky run`
 ```
 cd ..
