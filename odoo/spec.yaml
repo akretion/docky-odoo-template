@@ -8,7 +8,7 @@ server-brand:
         oca: https://github.com/OCA/server-brand
     merges:
         - oca 14.0
-        - oca refs/pull/33/head # PR for 'remove_odoo_enterprise'
+        - oca refs/pull/39/head # PR for 'remove_odoo_enterprise'
 
 social:
     modules: [mail_debrand]
