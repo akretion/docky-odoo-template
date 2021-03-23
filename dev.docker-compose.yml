@@ -9,7 +9,7 @@ services:
       - POSTGRES_USER=$PGUSER
       - POSTGRES_DB=$PGDATABASE
       - POSTGRES_PASSWORD=$PGPASSWORD
-    image: camptocamp/postgres:13
+    image: camptocamp/postgres:12
     volumes:
       - .db/:/var/lib/postgresql/data
     networks:
