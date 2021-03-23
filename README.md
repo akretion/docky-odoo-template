@@ -3,7 +3,7 @@
 
 Download this project files:
 ```sh
-$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/master | tar xvz
+$ wget -qO - https://api.github.com/repos/akretion/docky-odoo-template/tarball/14.0 | tar xvz
 $ mv akretion-docky-odoo-template-* odoo_project
 ```
 
@@ -20,7 +20,7 @@ Ensure docker-compose is well configured
 odoo_project $ docker-compose config
 ```
 
-Install and run ak in odoo folder: 
+Install and run ak in odoo folder:
 ```sh
 odoo_project $ cd odoo
 odoo_project/odoo $ ak build
