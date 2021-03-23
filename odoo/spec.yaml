@@ -1,7 +1,26 @@
 odoo:
     modules: []
-    src: https://github.com/oca/ocb 12.0
+    src: https://github.com/oca/ocb 14.0
 
-server-tools:
-    modules: [disable_odoo_online]
-    src: https://github.com/oca/server-tools 12.0
+server-brand:
+    modules: [disable_odoo_online, remove_odoo_enterprise]
+    remotes:
+        oca: https://github.com/OCA/server-brand
+    merges:
+        - oca 14.0
+        - oca refs/pull/33/head # PR for 'remove_odoo_enterprise'
+
+social:
+    modules: [mail_debrand]
+    src: https://github.com/OCA/social 14.0
+
+web:
+    modules: [
+        web_responsive,
+        web_dialog_size,
+    ]
+    src: https://github.com/OCA/web 14.0
+
+backend_theme:
+    modules: [backend_theme_v14]
+    src: https://github.com/Openworx/backend_theme 14.0
