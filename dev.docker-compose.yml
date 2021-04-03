@@ -30,7 +30,7 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
-      - "docky.access.help=${COMPOSE_PROJECT_NAME}.localhost"
+      - "docky.help=${COMPOSE_PROJECT_NAME}.localhost"
     links:
       - db
     networks:
