@@ -2,7 +2,7 @@ project_name: ""
 env: 
   type: str
   default: dev
-uid: 
+UID:
   type: int
 PGHOST:
   type: str
@@ -22,7 +22,7 @@ _secret_questions:
   - PGUSER
   - PGHOST
   - PGDATABASE
-  - uid
+  - UID
   - project_name
 
 _templates_suffix: .jinja
