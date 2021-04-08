@@ -16,3 +16,16 @@ PGUSER:
 PGPASSWORD:
   type: str
   default: odoo
+
+_secret_questions:
+  - PGPASSWORD
+  - PGUSER
+  - PGHOST
+  - PGDATABASE
+  - uid
+  - project_name
+
+_templates_suffix: .jinja
+_skip_if_exists:
+  - odoo/spec.yaml
+  - odoo/requirements.txt
