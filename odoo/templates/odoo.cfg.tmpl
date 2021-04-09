@@ -7,6 +7,8 @@ db_name = {{ .Env.DB_NAME }}
 dbfilter = {{ .Env.DB_NAME }}
 db_user = {{ .Env.DB_USER }}
 db_password = {{ .Env.DB_PASSWORD }}
+dbfilter = ^{{ default .Env.DB_FILTER .Env.DB_NAME }}$
+list_db = {{ default .Env.LIST_DB "False" }}
 admin_passwd = {{ default .Env.ADMIN_PASSWD "" }}
 db_maxconn = {{ default .Env.DB_MAXCONN "64" }}
 limit_memory_soft = {{ default .Env.LIMIT_MEMORY_SOFT "2147483648" }}
@@ -40,6 +42,9 @@ sentry_dsn = {{ default .Env.SENTRY_DSN "" }}
 encryption_key_dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
 encryption_key_remote-dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
 encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
+
+[queue_job]
+channels = {{ default .Env.QUEUE_JOB_CHANNELS "" }}
 
 [outgoing_mail]
 smtp_host = {{ default .Env.SMTP_HOST "localhost"}}
