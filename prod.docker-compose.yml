@@ -13,18 +13,12 @@ services:
       - ODOO_BASE_URL=
       - SENTRY=True
       - SENTRY_DSN=
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls=true"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`) && PathPrefix(`/longpolling/`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.tls=true"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=${COMPOSE_PROJECT_NAME}odoo"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
-      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
+      - PGSSLMODE=require
     volumes:
-      - ../data:/data/odoo/filestore
-      - ../data:/data/odoo/sessions
-      - ../data:/data/odoo/addons
+      - data/${COMPOSE_PROJECT_NAME}/addons:/data/odoo/addons
+      - data/${COMPOSE_PROJECT_NAME}/filestore:/data/odoo/filestore
+      - data/${COMPOSE_PROJECT_NAME}/sessions:/data/odoo/sessions
+    ports:
+      - 8069:8069
+      - 8072:8072
 version: '3.7'
