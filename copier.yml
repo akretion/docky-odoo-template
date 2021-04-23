@@ -1,6 +1,11 @@
 project_name: "" 
 env: 
   type: str
+  choices:
+    - dev
+    - prod
+    - ci
+    - other
   default: dev
 uid: 
   type: int
@@ -23,9 +28,10 @@ _secret_questions:
   - PGHOST
   - PGDATABASE
   - uid
-  - project_name
+  - env
 
 _templates_suffix: .jinja
 _skip_if_exists:
   - odoo/spec.yaml
   - odoo/requirements.txt
+  - odoo/setup.py

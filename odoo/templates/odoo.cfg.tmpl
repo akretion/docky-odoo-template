@@ -43,7 +43,6 @@ encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
 
 [outgoing_mail]
 smtp_host = {{ default .Env.SMTP_HOST "localhost"}}
-smtp_port = 587
 
 [ir.config_parameter]
 google_calendar_client_id = {{ default .Env.GOOGLE_CALENDAR_CLIENT_ID "Change me in .env" }}
