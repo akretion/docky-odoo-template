@@ -4,7 +4,6 @@ data_dir = /data/odoo
 auto_reload = False
 db_host = {{ .Env.DB_HOST }}
 db_name = {{ .Env.DB_NAME }}
-dbfilter = {{ .Env.DB_NAME }}
 db_user = {{ .Env.DB_USER }}
 db_password = {{ .Env.DB_PASSWORD }}
 dbfilter = ^{{ default .Env.DB_FILTER .Env.DB_NAME }}$
