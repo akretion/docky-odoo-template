@@ -8,7 +8,7 @@ services:
       - DB_HOST=$PGHOST
       - DB_NAME=$PGDATABASE
       - DB_USER=$PGUSER
-      - DB_PASS=$PGPASSWORD
+      - DB_PASSWORD=$PGPASSWORD
       - PGHOST=$PGHOST
       - PGDATABASE=$PGDATABASE
       - PGUSER=$PGUSER
@@ -18,11 +18,4 @@ services:
     labels:
       docky.main.service: true
       docky.user: odoo
-    volumes:
-      - ./odoo:/odoo
-      - ./data/addons:/data/odoo/addons
-      - ./data/filestore:/data/odoo/filestore
-      - ./data/sessions:/data/odoo/sessions
 version: '3.7'
-volumes:
-  py3o_tmp: null

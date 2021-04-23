@@ -7,7 +7,7 @@ env:
     - ci
     - other
   default: dev
-uid: 
+UID:
   type: int
 PGHOST:
   type: str
@@ -27,7 +27,7 @@ _secret_questions:
   - PGUSER
   - PGHOST
   - PGDATABASE
-  - uid
+  - UID
   - env
 
 _templates_suffix: .jinja
