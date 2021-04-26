@@ -6,8 +6,3 @@ repos:
             entry: found copier update rejection files; review them and remove them
             language: fail
             files: "\\.rej$"
-          - id: forbidden-files
-            name: forbidden files
-            entry: Don't commit secrets.docker-compose.yml file. It's plain text.
-            language: fail
-            files: "secrets.docker-compose.yml"
