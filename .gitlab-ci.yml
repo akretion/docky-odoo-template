@@ -1,0 +1,22 @@
+stages:
+  - build
+
+before_script:
+  - rm -rf bin
+  - git clone ssh://git@gitlab.akretion.com:10022/exploitation/ci-tools bin/
+  - export PATH=$PATH:${PWD}/bin
+  - export BUILD_NAME=$(ci-build-name)
+  - echo $BUILD_NAME
+
+build:
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - odoo/src
+      - odoo/external-src
+  stage: build
+  script:
+    - ci-build
+  only:
+    - merge_requests
+    - master
