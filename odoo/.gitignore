@@ -8,6 +8,6 @@
 /repo.yaml
 /pip-selfcheck.json
 
-external-src/
-src/
-links/
+/external-src/
+/src/
+/links/
