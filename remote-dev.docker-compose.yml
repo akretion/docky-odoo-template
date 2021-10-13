@@ -1,5 +1,6 @@
 services:
   odoo:
+  restart: always
     build: odoo # at term, CI should build it for us
     environment:
       - MARABUNTA_MODE=demo
