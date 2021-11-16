@@ -22,8 +22,7 @@ server-tools:
 server-tools-sentry:
   modules:
     - sentry
-  src: https://github.com/oca/server-tools refs/pull/1976/head
-# or src: https://github.com/Kencove/server-tools 14.0-mig-sentry
+  src: https://github.com/Kencove/server-tools 14.0-mig-sentry # refs/pull/1976/head
 
 # Alternative syntax
 # not recommanded

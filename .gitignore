@@ -1,3 +1,4 @@
 /.env
 /.db
 /data
+/secrets.docker-compose.yml
