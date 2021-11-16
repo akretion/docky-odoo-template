@@ -1,5 +1,5 @@
 [options]
-addons_path = {{ .Env.ADDONS_PATH }}
+addons_path = {{ .Env.ADDONS_PATH '/odoo/links,/odoo/local-src,/odoo/src/odoo/addons'}}
 data_dir = /data/odoo
 auto_reload = False
 db_host = {{ .Env.DB_HOST }}
@@ -39,7 +39,7 @@ sentry_auto_log_stacks = false
 sentry_odoo_dir = /odoo/src/odoo/
 sentry_dsn = {{ default .Env.SENTRY_DSN "" }}
 encryption_key_dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
-encryption_key_remote-dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
+encryption_key_ci={{ default .Env.ENCRYPTION_KEY_CI "" }}
 encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
 
 [queue_job]
