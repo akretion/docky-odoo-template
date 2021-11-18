@@ -1,5 +1,5 @@
 [options]
-addons_path = {{ .Env.ADDONS_PATH '/odoo/links,/odoo/local-src,/odoo/src/odoo/addons'}}
+addons_path = {{ default .Env.ADDONS_PATH "/odoo/links,/odoo/local-src,/odoo/src/odoo/addons"}}
 data_dir = /data/odoo
 auto_reload = False
 db_host = {{ .Env.DB_HOST }}
