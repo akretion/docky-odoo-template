@@ -1,0 +1,40 @@
+services:
+  odoo:
+    build: 
+      context: ./odoo
+      target: prod
+    image: "${BUILD_NAME}"
+    environment:
+      - MARABUNTA_MODE=demo
+      - MIGRATE=false
+      - ODOO_BASE_URL=https://${DOMAIN}
+      - SENTRY=True
+      - PGSSLMODE=require
+      - DB_NAME=${BUILD_NAME}
+      - POSTGRES_DB=${BUILD_NAME}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls=false"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${DOMAIN}`) && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.tls=false"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=${COMPOSE_PROJECT_NAME}odoo"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
+      - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
+    networks:
+      - traefik
+    volumes:
+      - type: tmpfs
+        target: /data/odoo/sessions
+      - type: tmpfs
+        target: /data/odoo/addons
+      - type: volume
+        source: filestore
+        target: /data/odoo/filestore
+volumes:
+  filestore:
+networks:
+  traefik:
+    external: true
+version: '3.7'

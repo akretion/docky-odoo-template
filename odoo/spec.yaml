@@ -1,26 +1,40 @@
 odoo:
-    modules: []
-    src: https://github.com/oca/ocb 14.0
+#    modules: []
+# do not forget to define the complete list
+# of odoo core modules
+  src: https://github.com/oca/ocb 14.0
+  depth: 1
 
+social:
+    modules:
+        - mail_debrand
+    src: https://github.com/OCA/social 14.0
+
+# Recommanded way: prefer short syntax without merges
+# all stable modules from main branch
+server-tools:
+  modules:
+    - base_technical_user
+  src: https://github.com/OCA/server-tools 14.0
+
+# and an dedicated entry (dir) for each
+# pending branch in order to avoid merges.
+server-tools-sentry:
+  modules:
+    - sentry
+  src: https://github.com/Kencove/server-tools 14.0-mig-sentry # refs/pull/1976/head
+
+# Alternative syntax
+# not recommanded
+# can also be used with multiple patch on the same module
 server-brand:
-    modules: [disable_odoo_online, remove_odoo_enterprise]
+    modules:
+      - disable_odoo_online
+      - remove_odoo_enterprise
     remotes:
         oca: https://github.com/OCA/server-brand
+    #   ak: https://github.com/akretion/server-brand
     merges:
         - oca 14.0
         - oca refs/pull/39/head # PR for 'remove_odoo_enterprise'
-
-social:
-    modules: [mail_debrand]
-    src: https://github.com/OCA/social 14.0
-
-web:
-    modules: [
-        web_responsive,
-        web_dialog_size,
-    ]
-    src: https://github.com/OCA/web 14.0
-
-backend_theme:
-    modules: [backend_theme_v14]
-    src: https://github.com/Openworx/backend_theme 14.0
+        # - ak somebranch

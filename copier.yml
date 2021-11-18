@@ -1,5 +1,5 @@
-project_name: "" 
-env: 
+project_name: ""
+env:
   type: str
   choices:
     - dev
@@ -9,6 +9,8 @@ env:
   default: dev
 UID:
   type: int
+  help: "Only for dev"
+  default: 1000
 PGHOST:
   type: str
   default: db

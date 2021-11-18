@@ -13,7 +13,15 @@ services:
       - PGDATABASE=$PGDATABASE
       - PGUSER=$PGUSER
       - PGPASSWORD=$PGPASSWORD
-      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons
+      - SERVER_WIDE_MODULES=web
+      #,queue_job,sentry?
+      - QUEUE_JOB_CHANNELS=
+          root:4,
+          root.pattern.import:1,
+          root.pattern.export:4,
+          root.shopinvader.bind_products:4,
+          root.search_engine.recompute:4,
+          root.search_engine.synchronize:4
     hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
     labels:
       docky.main.service: true

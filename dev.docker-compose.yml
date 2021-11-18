@@ -15,12 +15,19 @@ services:
     networks:
       - local
   odoo:
-    build: odoo
+    build:
+      context: ./odoo
+      target: dev
+    image: "${COMPOSE_PROJECT_NAME}-dev"
     environment:
       - DEMO=True
       - MARABUNTA_MODE=demo
+      - DB_FILTER=.*
+      - LIST_DB=True
       # you can specify your own addons path, if you don't want to use links
       # - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
+      - LIMIT_TIME_CPU=2400
+      - LIMIT_TIME_REAL=4800
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -30,14 +37,21 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowMethods=
+         GET,POST,OPTIONS,PUT"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowOriginList=*"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowHeaders=DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,api-key,partner-email,authorization,sess-cart-id,website-unique-key"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlExposeHeaders=Content-Length,Content-Range"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.addVaryHeader=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=${COMPOSE_PROJECT_NAME}corsHeader"
       - "docky.help=${COMPOSE_PROJECT_NAME}.localhost"
-    volumes:
-      - ./odoo:/odoo
-      - ./data/addons:/data/odoo/addons
-      - ./data/filestore:/data/odoo/filestore
-      - ./data/sessions:/data/odoo/sessions
     links:
       - db
     networks:
       - local
       - traefik
+    volumes:
+      - ./odoo:/odoo
+      - ./data/addons:/data/odoo/addons
+      - ./data/filestore:/data/odoo/filestore
+      - ./data/sessions:/data/odoo/sessions
