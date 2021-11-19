@@ -6,7 +6,7 @@ then
     exit 0
 fi
 
-if [ "$( psql -tAc "SELECT 1 FROM information_schema.tables WHERE table_name='queue_job'" )" ]
+if [ "$( psql -tAc "SELECT 'queue_job'::regclass" )" ]
 then
     echo "Queue Job not installed, ignoring script"
     exit 0
