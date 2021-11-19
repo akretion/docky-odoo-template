@@ -10,8 +10,14 @@ services:
       - ODOO_BASE_URL=https://${DOMAIN}
       - SENTRY=True
       - PGSSLMODE=require
+      - DB_HOST=${PGHOST}
       - DB_NAME=${BUILD_NAME}
+      - DB_USER=${CI_PROJECT_NAME}
+      - DB_PASSWORD=${PGPASSWORD}
+      - PGHOST=${PGHOST}
+      - PGUSER=${CI_PROJECT_NAME}
       - POSTGRES_DB=${BUILD_NAME}
+      - PGPASSWORD=${PGPASSWORD}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
