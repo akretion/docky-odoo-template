@@ -1,4 +1,5 @@
 /.env
 /.db
+*.mo
 /data
 /secrets.docker-compose.yml
