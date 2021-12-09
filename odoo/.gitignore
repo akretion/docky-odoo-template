@@ -1,5 +1,7 @@
 # compiled python files
 *.py[cod]
+# GNUText files (translations)
+*.mo
 # setup.py egg_info
 *.egg-info
 # emacs backup files
