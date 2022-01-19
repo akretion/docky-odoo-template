@@ -2,9 +2,7 @@ stages:
   - build
   - migrate
   - review
-  - stop_review
   - review_preprod
-  - update_preprod
   - deploy
   - sentry
 
@@ -29,8 +27,15 @@ clean-btrfs:
     - rm -rf ~/btrfs/${CI_PROJECT_NAME}/odoo/external-src/*
     - rm -rf ~/btrfs/${CI_PROJECT_NAME}/odoo/src
     - mkdir ~/btrfs/${CI_PROJECT_NAME}/odoo/src
+    - cd ~/btrfs/${CI_PROJECT_NAME}/odoo/src && git init
   when: manual
   allow_failure: true
+
+clean-docker:
+  stage: build
+  script:
+    - docker system prune -f
+  when: manual
 
 build:
   stage: build
@@ -43,7 +48,7 @@ build:
     - cp .env-ci .env
   script:
     - cd odoo && ak clone && ak sparse && ak build && cd ..
-    - docker-compose build
+    - DOCKER_BUILDKIT=1 docker-compose build
   after_script:
     - sudo CI_PIPELINE_ID=$CI_PIPELINE_ID CI_PROJECT_NAME=$CI_PROJECT_NAME ~/cleanup_btrfs.sh
   only:
@@ -54,21 +59,22 @@ build:
 migrate:
   stage: migrate
   script:
-    - ci-getdevdb
-#    - ci-getdb # pour avoir la vraie base qd on l'hebergera
-#    hack to fix /data/odoo permission before stepdown with gosu
-    - docker-compose run odoo chown odoo /data/odoo/addons /data/odoo/filestore /data/odoo/sessions
-    - docker-compose run odoo gosu odoo odoo -i web --stop-after-init
+    - echo $CI_MERGE_REQUEST_LABELS | grep keepdb || ci-getdb
+    # ci-getdevdb pour avoir une base vierge
+    - docker-compose run odoo gosu odoo click-odoo-update
   only:
     - merge_requests
+    - "master"
+    - "main"
 
 review:
   stage: review
   script:
+    - docker-compose run odoo chown odoo /data/odoo/addons /data/odoo/filestore /data/odoo/sessions 
     - docker-compose up -d
   environment:
     name: test/${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID}
-    url: https://${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}.${CI_DOMAIN}
+    url: https://${DOMAIN}
     on_stop: stop_review
   only:
     - merge_requests
@@ -76,32 +82,24 @@ review:
 stop_review:
   stage: review
   script:
-    - docker-compose down
-  when: manual
+    - docker-compose down --rmi local --volumes
   environment:
     name: test/${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID}
     action: stop
+  when: manual
   only:
     - merge_requests
 
 review_preprod:
   stage: review_preprod
   script:
-    # hack to fix /data/odoo permission before stepdown with gosu
-    - docker-compose run odoo chown odoo /data/odoo/addons /data/odoo/filestore /data/odoo/sessions
+    - ci-getdb
     - docker-compose up -d
   environment:
     name: preprod
     url: https://${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}
   only:
-    - "master"
-    - "main"
-
-update_preprod:
-  stage: update_preprod
-  script:
-    - cd ~/btrfs/${CI_PROJECT_NAME}/odoo && git pull && ak build
-  only:
+    - "14.0"
     - "master"
     - "main"
 
@@ -120,11 +118,13 @@ deploy:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - cd odoo && ak clone && ak sparse && ak build && cd ..
-    - docker-compose build
+    - DOCKER_BUILDKIT=1 docker-compose build
     - docker-compose push
-    - BUILD_NAME=$CI_REGISTRY_IMAGE:latest docker-compose push
+    - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose build
+    - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose push
   when: manual
   only:
+    - "14.0"
     - "master"
     - "main"
 
@@ -142,5 +142,8 @@ sentry:
     - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $VERSION --finalize
     - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $VERSION --auto
   only:
+    - "14.0"
     - "master"
     - "main"
+  needs:
+    - deploy

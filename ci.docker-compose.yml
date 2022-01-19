@@ -10,14 +10,10 @@ services:
       - ODOO_BASE_URL=https://${DOMAIN}
       - SENTRY=True
       - PGSSLMODE=require
-      - DB_HOST=${PGHOST}
       - DB_NAME=${BUILD_NAME}
-      - DB_USER=${CI_PROJECT_NAME}
-      - DB_PASSWORD=${PGPASSWORD}
-      - PGHOST=${PGHOST}
-      - PGUSER=${CI_PROJECT_NAME}
       - POSTGRES_DB=${BUILD_NAME}
-      - PGPASSWORD=${PGPASSWORD}
+   #  - SENTRY_DSN=TOBEDEFINED
+   #   - ENCRYPTION_KEY_CI=TOBEDEFINED
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
@@ -34,9 +30,7 @@ services:
       - traefik
     volumes:
       - type: tmpfs
-        target: /data/odoo/sessions
-      - type: tmpfs
-        target: /data/odoo/addons
+        target: /data/odoo
       - type: volume
         source: filestore
         target: /data/odoo/filestore

@@ -1,9 +1,11 @@
 services:
   odoo:
     restart: always
-    image: TODO # repository url
+    image: TODO
     environment:
       - MARABUNTA_MODE=prod
+      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons
+      - ODOO_BASE_URL=TODO
       - SENTRY=True
       - SENTRY_DSN=TODO
       - PGSSLMODE=require
@@ -12,7 +14,6 @@ services:
       - PGUSER=TODO
       - LIMIT_TIME_CPU=TODO
       - LIMIT_TIME_REAL=TODO
-      - ODOO_BASE_URL=https://TODO
     volumes:
       - ~/data/${COMPOSE_PROJECT_NAME}/addons:/data/odoo/addons
       - ~/data/${COMPOSE_PROJECT_NAME}/filestore:/data/odoo/filestore
