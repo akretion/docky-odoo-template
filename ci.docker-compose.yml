@@ -11,8 +11,11 @@ services:
       - SENTRY=True
       - PGSSLMODE=require
       - DB_NAME=${BUILD_NAME}
-      - POSTGRES_DB=${BUILD_NAME}
-   #  - SENTRY_DSN=TOBEDEFINED
+      - PGDATABASE=${BUILD_NAME}
+      - DB_USER=${COMPOSE_PROJECT_NAME}
+      - PGUSER=${COMPOSE_PROJECT_NAME}
+      - DB_HOST=pgci.home.arpa
+      - PGHOST=pgci.home.arpa
    #   - ENCRYPTION_KEY_CI=TOBEDEFINED
     labels:
       - "traefik.enable=true"
