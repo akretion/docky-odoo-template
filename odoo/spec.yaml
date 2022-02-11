@@ -10,6 +10,11 @@ social:
         - mail_debrand
     src: https://github.com/OCA/social 14.0
 
+server-auth:
+  modules:
+    - auth_oidc
+  src: https://github.com/OCA/server-auth 14.0
+
 # Recommanded way: prefer short syntax without merges
 # all stable modules from main branch
 server-tools:
@@ -22,7 +27,7 @@ server-tools:
 server-tools-sentry:
   modules:
     - sentry
-  src: https://github.com/Kencove/server-tools 14.0-mig-sentry # refs/pull/1976/head
+  src: https://github.com/akretion/server-tools 14.0-mig-sentry-sdk
 
 # Alternative syntax
 # not recommanded
