@@ -38,3 +38,5 @@ COPY ./local-src /odoo/local-src
 COPY ./src /odoo/src
 RUN pip install -e /odoo
 RUN pip install -e /odoo/src
+ARG SENTRY_RELEASE
+ENV SENTRY_RELEASE=${SENTRY_RELEASE}

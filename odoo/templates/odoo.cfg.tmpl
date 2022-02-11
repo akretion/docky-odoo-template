@@ -13,8 +13,8 @@ db_maxconn = {{ default .Env.DB_MAXCONN "64" }}
 limit_memory_soft = {{ default .Env.LIMIT_MEMORY_SOFT "2147483648" }}
 limit_memory_hard = {{ default .Env.LIMIT_MEMORY_HARD "2684354560" }}
 limit_request = {{ default .Env.LIMIT_REQUEST "8192" }}
-limit_time_cpu = {{ default .Env.LIMIT_TIME_CPU "60" }}
-limit_time_real = {{ default .Env.LIMIT_TIME_REAL "120" }}
+limit_time_cpu = {{ default .Env.LIMIT_TIME_CPU "480" }}
+limit_time_real = {{ default .Env.LIMIT_TIME_REAL "480" }}
 log_handler = {{ default .Env.LOG_HANDLER "':INFO'" }}
 log_level = {{ default .Env.LOG_LEVEL "info" }}
 max_cron_threads = {{ default .Env.MAX_CRON_THREADS "2" }}
@@ -39,6 +39,8 @@ sentry_environment = {{ default .Env.RUNNING_ENV "dev" }}
 sentry_auto_log_stacks = false
 sentry_odoo_dir = /odoo/src/odoo/
 sentry_dsn = {{ default .Env.SENTRY_DSN "" }}
+sentry_release = {{ default .Env.SENTRY_RELEASE "" }}
+sentry_traces_sample_rate = {{ default .Env.SENTRY_TRACES_SAMPLE_RATE "0.2" }}
 encryption_key_dev={{ default .Env.ENCRYPTION_KEY_DEV "" }}
 encryption_key_ci={{ default .Env.ENCRYPTION_KEY_CI "" }}
 encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
@@ -49,6 +51,3 @@ channels = {{ default .Env.QUEUE_JOB_CHANNELS "" }}
 [outgoing_mail]
 smtp_host = {{ default .Env.SMTP_HOST "localhost"}}
 
-[ir.config_parameter]
-google_calendar_client_id = {{ default .Env.GOOGLE_CALENDAR_CLIENT_ID "Change me in .env" }}
-google_calendar_client_secret = {{ default .Env.GOOGLE_CALENDAR_CLIENT_SECRET "Change me in .env" }}

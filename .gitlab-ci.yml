@@ -20,16 +20,7 @@ before_script:
   - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
   - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
   - cp .env-ci .env
-
-clean-btrfs:
-  stage: build
-  script:
-    - rm -rf ~/btrfs/${CI_PROJECT_NAME}/odoo/external-src/*
-    - rm -rf ~/btrfs/${CI_PROJECT_NAME}/odoo/src
-    - mkdir ~/btrfs/${CI_PROJECT_NAME}/odoo/src
-    - cd ~/btrfs/${CI_PROJECT_NAME}/odoo/src && git init
-  when: manual
-  allow_failure: true
+  - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
 
 clean-docker:
   stage: build
@@ -46,6 +37,7 @@ build:
     - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
     - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
     - cp .env-ci .env
+    - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
   script:
     - cd odoo && ak clone && ak sparse && ak build && cd ..
     - DOCKER_BUILDKIT=1 docker-compose build
@@ -59,7 +51,10 @@ build:
 migrate:
   stage: migrate
   script:
-    - echo $CI_MERGE_REQUEST_LABELS | grep keepdb || ci-getdb
+    - docker-compose kill
+    #- echo $CI_MERGE_REQUEST_LABELS | grep keepdb || ci-getdb
+    - sops -d ci-db-token > ci-db-token.env && set -o allexport; source ./ci-db-token.env; set +o allexport; ci-getdb
+
     # ci-getdevdb pour avoir une base vierge
     - docker-compose run odoo gosu odoo click-odoo-update
   only:
@@ -70,7 +65,6 @@ migrate:
 review:
   stage: review
   script:
-    - docker-compose run odoo chown odoo /data/odoo/addons /data/odoo/filestore /data/odoo/sessions 
     - docker-compose up -d
   environment:
     name: test/${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID}
@@ -118,7 +112,7 @@ deploy:
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - cd odoo && ak clone && ak sparse && ak build && cd ..
-    - DOCKER_BUILDKIT=1 docker-compose build
+    - DOCKER_BUILDKIT=1 docker-compose build --build-arg SENTRY_RELEASE=$CI_COMMIT_SHORT_SHA
     - docker-compose push
     - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose build
     - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose push
@@ -138,9 +132,8 @@ sentry:
     - docker run --env-file sentry.env getsentry/sentry-cli info
     - export PWD=`pwd`
     - echo $PWD
-    - export VERSION=`docker run --env-file sentry.env -v $PWD:/work getsentry/sentry-cli releases propose-version`
-    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $VERSION --finalize
-    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $VERSION --auto
+    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $CI_COMMIT_SHORT_SHA --finalize
+    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $CI_COMMIT_SHORT_SHA --auto
   only:
     - "14.0"
     - "master"
