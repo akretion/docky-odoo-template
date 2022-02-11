@@ -16,7 +16,6 @@ services:
       - PGUSER=${COMPOSE_PROJECT_NAME}
       - DB_HOST=pgci.home.arpa
       - PGHOST=pgci.home.arpa
-   #   - ENCRYPTION_KEY_CI=TOBEDEFINED
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
