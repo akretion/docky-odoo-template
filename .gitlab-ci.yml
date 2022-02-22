@@ -20,6 +20,7 @@ before_script:
   - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
   - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
   - cp .env-ci .env
+  - echo "UID=`id -u`" >> .env
   - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
 
 clean-docker:
@@ -103,6 +104,7 @@ deploy:
     - mkdir odoo/src
     - mkdir odoo/external-src
     - cp .env-ci .env
+    - echo "UID=`id -u`" >> .env
     # git init into odoo because we do not use modules key
     - cd odoo/src && git init && cd ../../
   variables:
