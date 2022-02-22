@@ -2,5 +2,4 @@
 /.db
 /data
 /secrets.docker-compose.yml
-/prod.secrets.docker-compose.yml
-/ci.secrets.docker-compose.yml
+/clear-*
