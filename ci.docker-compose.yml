@@ -12,8 +12,8 @@ services:
       - PGSSLMODE=require
       - DB_NAME=${BUILD_NAME}
       - PGDATABASE=${BUILD_NAME}
-      - DB_USER=${COMPOSE_PROJECT_NAME}
-      - PGUSER=${COMPOSE_PROJECT_NAME}
+      - DB_USER=${CI_PROJECT_NAME}
+      - PGUSER=${CI_PROJECT_NAME}
       - DB_HOST=pgci.home.arpa
       - PGHOST=pgci.home.arpa
     labels:
