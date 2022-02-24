@@ -11,25 +11,8 @@ UID:
   type: int
   help: "Only for dev"
   default: 1000
-PGHOST:
-  type: str
-  default: db
-PGDATABASE:
-  type: str
-  default: db
-PGUSER:
-  type: str
-  default: odoo
-PGPASSWORD:
-  type: str
-  default: odoo
 
 _secret_questions:
-  - PGPASSWORD
-  - PGUSER
-  - PGHOST
-  - PGDATABASE
-  - UID
   - env
 
 _templates_suffix: .jinja
@@ -37,3 +20,7 @@ _skip_if_exists:
   - odoo/spec.yaml
   - odoo/requirements.txt
   - odoo/setup.py
+  - clear-ci-db-token
+  - clear-ci.secrets.docker-compose.yml
+  - clear-prod.secrets.docker-compose.yml
+  - secrets.docker-compose.yml
