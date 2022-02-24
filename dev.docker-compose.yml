@@ -20,8 +20,6 @@ services:
       - MARABUNTA_MODE=demo
       - DB_FILTER=.*
       - LIST_DB=True
-      # you can specify your own addons path, if you don't want to use links
-      # - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons,/odoo/external-src/server-tools
       - LIMIT_TIME_CPU=2400
       - LIMIT_TIME_REAL=4800
     labels:

@@ -16,6 +16,7 @@ services:
           root.search_engine.synchronize:4
      # - ENCRYPTION_KEY_DEV=
      # - SENTRY_DSN=
+      - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons
     hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
     labels:
       docky.main.service: true
