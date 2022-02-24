@@ -100,24 +100,13 @@ review_preprod:
 
 deploy:
   stage: deploy
-  before_script:
-    - mkdir odoo/src
-    - mkdir odoo/external-src
-    - cp .env-ci .env
-    - echo "UID=`id -u`" >> .env
-    # git init into odoo because we do not use modules key
-    - cd odoo/src && git init && cd ../../
-  variables:
-    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    BUILD_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    COMPOSE_PROJECT_NAME: ${CI_PROJECT_NAME}-${CI_COMMIT_SHA}
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - cd odoo && ak clone && ak sparse && ak build && cd ..
-    - DOCKER_BUILDKIT=1 docker-compose build --build-arg SENTRY_RELEASE=$CI_COMMIT_SHORT_SHA
-    - docker-compose push
-    - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose build
-    - BUILD_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA docker-compose push
+    # push to repository with :branchname and :commit
+    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   when: manual
   only:
     - "14.0"
