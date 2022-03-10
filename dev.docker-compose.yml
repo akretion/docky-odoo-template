@@ -22,6 +22,8 @@ services:
       - LIST_DB=True
       - LIMIT_TIME_CPU=2400
       - LIMIT_TIME_REAL=4800
+      - KWKHTMLTOPDF_SERVER_URL=http://kwkhtmltopdf:8080
+      - ODOO_REPORT_URL=http://odoo:8069
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -41,6 +43,7 @@ services:
       - "docky.help=${COMPOSE_PROJECT_NAME}.localhost"
     links:
       - db
+      - kwkhtmltopdf
     networks:
       - local
       - traefik
@@ -49,3 +52,7 @@ services:
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
+  kwkhtmltopdf:
+    image: acsone/kwkhtmltopdf
+    networks:
+      - local
