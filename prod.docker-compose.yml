@@ -14,6 +14,8 @@ services:
       - PGUSER=TODO
       - DB_HOST=TODO
       - PGHOST=TODO
+      - KWKHTMLTOPDF_SERVER_URL=http://kwkhtmltopdf:8080
+      - ODOO_REPORT_URL=http://odoo:8069
     volumes:
       - ~/data/${COMPOSE_PROJECT_NAME}/addons:/data/odoo/addons
       - ~/data/${COMPOSE_PROJECT_NAME}/filestore:/data/odoo/filestore
@@ -21,4 +23,14 @@ services:
     ports:
       - 8069:8069
       - 8072:8072
+    networks:
+      - local
+    links:
+      - kwkhtmltopdf
+  kwkhtmltopdf:
+    image: acsone/kwkhtmltopdf
+    networks:
+      - local
+networks:
+  local:
 version: '3.7'
