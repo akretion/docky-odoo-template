@@ -10,6 +10,8 @@ dbfilter = ^{{ default .Env.DB_FILTER .Env.DB_NAME }}$
 list_db = {{ default .Env.LIST_DB "False" }}
 admin_passwd = {{ default .Env.ADMIN_PASSWD "" }}
 db_maxconn = {{ default .Env.DB_MAXCONN "64" }}
+imdispatcher_db_host = {{ default .Env.IMDISPATCHER_DB_HOST .Env.DB_HOST "" }}
+imdispatcher_db_port = {{ default .Env.IMDISPATCHER_DB_PORT .Env.DB_PORT "" }}
 limit_memory_soft = {{ default .Env.LIMIT_MEMORY_SOFT "2147483648" }}
 limit_memory_hard = {{ default .Env.LIMIT_MEMORY_HARD "2684354560" }}
 limit_request = {{ default .Env.LIMIT_REQUEST "8192" }}
@@ -47,6 +49,8 @@ encryption_key_prod={{ default .Env.ENCRYPTION_KEY_PROD "" }}
 
 [queue_job]
 channels = {{ default .Env.QUEUE_JOB_CHANNELS "" }}
+jobrunner_db_host={{ default .Env.ODOO_QUEUE_JOB_JOBRUNNER_DB_HOST .Env.DB_HOST "" }}
+jobrunner_db_port={{ default .Env.ODOO_QUEUE_JOB_JOBRUNNER_DB_PORT .Env.DB_PORT "" }}
 
 [outgoing_mail]
 smtp_host = {{ default .Env.SMTP_HOST "localhost"}}
