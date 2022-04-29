@@ -16,7 +16,7 @@ before_script:
   - rm -rf bin
   - git clone $CI_TOOLS_REPOSITORY_URL bin/
   - export PATH=$PATH:${PWD}/bin
-  - export BUILD_NAME=${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID:-preprod}
+  - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
   - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
   - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
   - cp .env-ci .env
@@ -34,7 +34,7 @@ build:
   before_script:
     - sudo CI_PIPELINE_ID=$CI_PIPELINE_ID CI_PROJECT_NAME=$CI_PROJECT_NAME CI_REPOSITORY_URL=$CI_REPOSITORY_URL ~/prepare_btrfs.sh
     # do it twice because before_script is redefined
-    - export BUILD_NAME=${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID:-preprod}  
+    - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
     - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
     - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
     - cp .env-ci .env
@@ -68,8 +68,8 @@ review:
   script:
     - docker-compose up -d
   environment:
-    name: test/${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID}
-    url: https://${DOMAIN}
+    name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
+    url: https://${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}.${CI_DOMAIN}
     on_stop: stop_review
   only:
     - merge_requests
@@ -79,7 +79,7 @@ stop_review:
   script:
     - docker-compose down --rmi local --volumes
   environment:
-    name: test/${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID}
+    name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
     action: stop
   when: manual
   only:
