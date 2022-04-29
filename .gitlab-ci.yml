@@ -14,7 +14,7 @@ stages:
 
 before_script:
   - rm -rf bin
-  - git clone $CI_TOOLS_REPOSITORY_URL -b new-infra bin/
+  - git clone $CI_TOOLS_REPOSITORY_URL bin/
   - export PATH=$PATH:${PWD}/bin
   - export BUILD_NAME=${CI_PROJECT_NAME}-${CI_MERGE_REQUEST_IID:-preprod}
   - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
