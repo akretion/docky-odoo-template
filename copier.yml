@@ -12,6 +12,20 @@ UID:
   help: "Only for dev"
   default: 1000
 
+# remote conf
+remote_vm_name:
+  type: str
+  default: "{{ project_name }}"
+remote_dir_name:
+  type: str
+  default: "/home/app/{{ project_name }}"
+repo_url:
+  type: str
+  default: "https://gitlab.akretion.com/akretion/{{ project_name }}"
+repo_access_token:
+  type: str
+  help: "(Generate here {{ repo_url }}/-/settings/access_tokens)"
+
 _secret_questions:
   - env
 
