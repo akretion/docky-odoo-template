@@ -58,6 +58,7 @@ migrate:
 
     # ci-getdevdb pour avoir une base vierge
     - docker-compose run odoo gosu odoo click-odoo-update
+    # - docker-compose run odoo gosu odoo odoo -i my_own_dependency_for_ci
   only:
     - merge_requests
     - "master"
