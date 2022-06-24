@@ -24,6 +24,7 @@ before_script:
   - echo "UID=`id -u`" >> .env
   - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
 
+# Build the container (docker build, pip install, ak build...)
 build:
   stage: build
   script:
@@ -35,6 +36,7 @@ build:
     - merge_requests
     - "{{ preprod_branch }}"
 
+# Run the database changes (click-odoo-update or migrate marabunta)
 migrate:
   stage: migrate
   script:
@@ -48,6 +50,7 @@ migrate:
     - merge_requests
     - "{{ preprod_branch }}"
 
+# Run the container used for the review
 review:
   stage: review
   script:
@@ -59,6 +62,7 @@ review:
   only:
     - merge_requests
 
+# Stop the container used for the review
 stop_review:
   stage: review
   script:
@@ -70,6 +74,7 @@ stop_review:
   only:
     - merge_requests
 
+# Start the preprod container
 review_preprod:
   stage: review_preprod
   script:
@@ -81,6 +86,7 @@ review_preprod:
   only:
     - "{{ preprod_branch }}"
 
+# Send the docker image to the registry in order to be downloaded in prod
 deploy:
   stage: deploy
   script:
@@ -113,6 +119,8 @@ sentry:
   needs:
     - deploy
 
+# To use when there is a problem with the `ak build` cache, to reset it.
+# After running it, you shoud run an init and a build
 delete_source_cache:
   stage: maintenance
   script:
@@ -123,6 +131,7 @@ delete_source_cache:
   only:
     - "{{ preprod_branch }}"
 
+# Initialize the cache, to run before using the CI machine for the first time
 init_source_cache:
   stage: maintenance
   script:
@@ -134,6 +143,7 @@ init_source_cache:
   only:
     - "{{ preprod_branch }}"
 
+# Update the cache of the src/ and external-src/ used as a base for the `ak build`
 build_source_cache:
   stage: maintenance
   script:
@@ -142,6 +152,8 @@ build_source_cache:
   only:
     - "{{ preprod_branch }}"
 
+# Delete the data associated with the stopped containers
+# Runs automatically every night
 prune_docker:
   stage: maintenance
   script:
