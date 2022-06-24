@@ -33,9 +33,7 @@ build:
     - DOCKER_BUILDKIT=1 docker-compose build
   only:
     - merge_requests
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 migrate:
   stage: migrate
@@ -48,9 +46,7 @@ migrate:
     - docker-compose run odoo gosu odoo click-odoo-update
   only:
     - merge_requests
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 review:
   stage: review
@@ -83,9 +79,7 @@ review_preprod:
     name: preprod
     url: https://${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 deploy:
   stage: deploy
@@ -100,9 +94,7 @@ deploy:
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   when: manual
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 sentry:
   stage: sentry
@@ -117,9 +109,7 @@ sentry:
     - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $CI_COMMIT_SHORT_SHA --finalize
     - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $CI_COMMIT_SHORT_SHA --auto
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
   needs:
     - deploy
 
@@ -131,9 +121,7 @@ delete_source_cache:
     - rm -rf /home/gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}
   when: manual
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 init_source_cache:
   stage: maintenance
@@ -144,9 +132,7 @@ init_source_cache:
     - cd ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src && git init
   when: manual
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 build_source_cache:
   stage: maintenance
@@ -154,9 +140,7 @@ build_source_cache:
     - cd ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo && git remote set-url origin ${CI_REPOSITORY_URL} && git pull && ak build
   when: manual
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"
 
 prune_docker:
   stage: maintenance
@@ -164,6 +148,4 @@ prune_docker:
     - docker system prune --all --volumes --force
   when: manual
   only:
-    - "14.0"
-    - "master"
-    - "main"
+    - "{{ preprod_branch }}"

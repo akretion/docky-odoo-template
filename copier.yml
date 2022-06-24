@@ -12,6 +12,11 @@ UID:
   help: "Only for dev"
   default: 1000
 
+preprod_branch:
+  type: str
+  default: 14.0
+  help: "The name of the main branch, where the preprod is executed. (ex: main, master, 14.0)"
+
 _secret_questions:
   - env
 
