@@ -1,7 +1,7 @@
 services:
   odoo:
     restart: always
-    image: TODO
+    image: {{ repo_url | replace("https://", "registry.") }}:main
     environment:
       - MARABUNTA_MODE=prod
       - ADDONS_PATH=/odoo/links,/odoo/local-src,/odoo/src/odoo/addons,/odoo/src/addons
