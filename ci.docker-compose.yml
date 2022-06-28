@@ -11,7 +11,6 @@ services:
       - SENTRY=True
       - PGSSLMODE=require
       - DB_NAME=${BUILD_NAME}
-      - DB_HOST=TODO
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
