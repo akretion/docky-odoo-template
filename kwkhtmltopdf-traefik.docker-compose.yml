@@ -1,0 +1,10 @@
+services:
+  kwkhtmltopdf:
+    image: acsone/kwkhtmltopdf
+    container_name: "kwkhtmltopdf"
+    networks:
+      - traefik
+networks:
+  traefik:
+    external: true
+version: "3.7"

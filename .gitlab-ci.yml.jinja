@@ -1,9 +1,13 @@
 stages:
   - maintenance
+  - lint
   - build
+  - test
   - migrate
   - review
+  - stop_review
   - review_preprod
+  - docker_push
   - deploy
   - sentry
 
@@ -15,37 +19,77 @@ stages:
 
 before_script:
   - rm -rf bin
-  - git clone $CI_TOOLS_REPOSITORY_URL bin/
+  - git clone ssh://git@gitlab.akretion.com:10022/exploitation/ci-tools -b new-infra
+    bin/
   - export PATH=$PATH:${PWD}/bin
-  - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
-  - export DOMAIN="${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}.${CI_DOMAIN}"
-  - export COMPOSE_PROJECT_NAME=${BUILD_NAME}
+  - export DOCKER_BUILDKIT=1
+  - . ~/.bash_secret_vars
   - cp .env-ci .env
-  - echo "UID=`id -u`" >> .env
-  - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
+  - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
+  - export CI_DOMAIN=${CI_DOMAIN}
+  - |
+    cat << EOF >> .env
+    UID=`id -u`
+    BUILD_NAME=${BUILD_NAME}
+    DOMAIN=${BUILD_NAME}.${CI_DOMAIN}
+    COMPOSE_PROJECT_NAME=${BUILD_NAME}
+    PGDATABASE=\${PGDATABASE:-$BUILD_NAME}
+    ENCRYPTION_KEY_PREPROD=${ENCRYPTION_KEY_PREPROD}
+    ODOO_REPORT_URL=http://$BUILD_NAME:8069
+    EOF
+  - mkdir shared
 
-# Build the container (docker build, pip install, ak build...)
-build:
-  stage: build
+# Pre-commit lint
+lint:
+  stage: lint
   script:
-    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/src
-    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/external-src
-    - cd odoo && ak clone && ak sparse && ak build && cd ..
-    - DOCKER_BUILDKIT=1 docker-compose build
+    - pre-commit install
+    - pre-commit run --all --show-diff-on-failure --verbose --color always
   only:
     - merge_requests
     - "{{ preprod_branch }}"
+
+# Build the container (with soft bump if needed)
+build:
+  stage: build
+  script:
+    - ./bump
+    - docker-compose build
+  only:
+    - merge_requests
+    - "{{ preprod_branch }}"
+
+test:
+  stage: test
+  script:
+    - echo "DB_NAME=${BUILD_NAME}_test" >> .env
+    # exclude product_code_unique and product_usability to install it after
+    - export EXCLUDE_DEPENDENCIES=product_code_unique,product_usability
+    - export MARABUNTA_MODE=demo
+    - export PGDATABASE="${BUILD_NAME}_test"
+    - docker-compose kill
+    - ci-drop-db $PGDATABASE
+    - docker-compose run odoo gosu odoo initdb ${BUILD_NAME}_test --cache-prefix
+      ${CI_PROJECT_NAME:0:7}
+    - docker-compose run odoo gosu odoo runtests
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
+    - if: $CI_COMMIT_REF_NAME == "{{ preprod_branch }}"
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: shared/coverage.xml
 
 # Run the database changes (click-odoo-update or migrate marabunta)
 migrate:
   stage: migrate
   script:
+    - export PGDATABASE=$BUILD_NAME
+    - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
-    #- echo $CI_MERGE_REQUEST_LABELS | grep keepdb || ci-getdb
-    - sops -d ci-db-token > ci-db-token.env && set -o allexport; source ./ci-db-token.env; set +o allexport; ci-getdb
-
-    # ci-getdevdb pour avoir une base vierge
-    - docker-compose run odoo gosu odoo click-odoo-update
+    - ci-getdb
+    - docker-compose run odoo odoo --stop-after-init
   only:
     - merge_requests
     - "{{ preprod_branch }}"
@@ -54,6 +98,12 @@ migrate:
 review:
   stage: review
   script:
+    - echo "DB_NAME=$BUILD_NAME" >> .env
+    # TODO reimplement fetch mr env that do no depend on cidbservice
+    #- ci-fetch-mr-environment
+    #- source fetch-env.txt
+    #- export $(cut -d= -f1 fetch-env.txt)
+    - docker-compose kill
     - docker-compose up -d
   environment:
     name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
@@ -78,7 +128,9 @@ stop_review:
 review_preprod:
   stage: review_preprod
   script:
-    - ci-getdb
+    - echo "DB_NAME=$BUILD_NAME" >> .env
+    - echo "DOMAIN=${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}" >> .env
+    - docker-compose kill
     - docker-compose up -d
   environment:
     name: preprod
@@ -87,21 +139,32 @@ review_preprod:
     - "{{ preprod_branch }}"
 
 # Send the docker image to the registry in order to be downloaded in prod
-deploy:
-  stage: deploy
+docker_push:
+  stage: docker_push
   script:
+    - export TAG="${CI_COMMIT_MESSAGE//Bump version /}"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/src
-    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/external-src
-    # push to repository with :branchname and :commit
-    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  when: manual
-  only:
-    - "{{ preprod_branch }}"
+    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$TAG
+    - docker push $CI_REGISTRY_IMAGE:$TAG
+  rules:
+    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ preprod_branch }}"
 
+bump:
+  stage: review_preprod
+  script:
+    - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
+    - git remote set-url origin "https://gitlab-ci-token:${CI_UPLOAD_TOKEN}@${url_host}"
+    - ./bump --commit-branch $CI_COMMIT_REF_NAME
+  rules:
+    - if: $CI_COMMIT_TITLE !~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ preprod_branch }}"
+      when: manual
+  # allow_failure is needed due to gitlab issue
+  # https://gitlab.com/gitlab-org/gitlab/-/issues/249524
+  allow_failure: true
+
+# TODO rework on sentry maybe merge with bump ?
 sentry:
   stage: sentry
   image:
@@ -119,45 +182,22 @@ sentry:
   needs:
     - deploy
 
-# To use when there is a problem with the `ak build` cache, to reset it.
-# After running it, you shoud run an init and a build
-delete_source_cache:
-  stage: maintenance
-  script:
-    - sudo btrfs subvolume delete ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/external-src
-    - sudo btrfs subvolume delete ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src
-    - rm -rf /home/gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}
-  when: manual
-  only:
-    - "{{ preprod_branch }}"
-
-# Initialize the cache, to run before using the CI machine for the first time
-init_source_cache:
-  stage: maintenance
-  script:
-    - git clone ${CI_REPOSITORY_URL} ~/builds/btrfscache_${CI_PROJECT_NAME}
-    - btrfs subvolume create ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/external-src
-    - btrfs subvolume create ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src
-    - cd ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src && git init
-  when: manual
-  only:
-    - "{{ preprod_branch }}"
-
-# Update the cache of the src/ and external-src/ used as a base for the `ak build`
-build_source_cache:
-  stage: maintenance
-  script:
-    - cd ~/builds/btrfscache_${CI_PROJECT_NAME}/odoo && git remote set-url origin ${CI_REPOSITORY_URL} && git pull && ak build
-  when: manual
-  only:
-    - "{{ preprod_branch }}"
-
 # Delete the data associated with the stopped containers
 # Runs automatically every night
 prune_docker:
   stage: maintenance
   script:
     - docker system prune --all --volumes --force
+  when: manual
+  only:
+    - "{{ preprod_branch }}"
+
+# Start/Restart kwhtmltopdf
+kwkhtmltopdf:
+  stage: maintenance
+  script:
+    - docker-compose -f kwkhtmltopdf-traefik.docker-compose.yml down
+    - docker-compose -f kwkhtmltopdf-traefik.docker-compose.yml up -d
   when: manual
   only:
     - "{{ preprod_branch }}"

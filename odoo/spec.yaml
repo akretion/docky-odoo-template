@@ -1,10 +1,3 @@
-odoo:
-#    modules: []
-# do not forget to define the complete list
-# of odoo core modules
-  src: https://github.com/oca/ocb 14.0
-  depth: 1
-
 social:
     modules:
         - mail_debrand
