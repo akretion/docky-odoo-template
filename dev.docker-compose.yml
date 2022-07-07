@@ -1,32 +1,39 @@
-version: "3.7"
 networks:
-  local:
   traefik:
     external: true
+  local:
 services:
   db:
-    image: camptocamp/postgres:12
+    image: postgres:13
+    user: "${UID}:${UID}"
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_DB=db
+      - POSTGRES_PASSWORD=odoo
     volumes:
       - .db/:/var/lib/postgresql/data
     networks:
       - local
   odoo:
     build:
-      context: ./odoo
+      context: odoo
       target: dev
-    image: "${COMPOSE_PROJECT_NAME}-dev"
     environment:
-      - DEMO=True
-      - MARABUNTA_MODE=demo
-      - DB_FILTER=.*
-      - LIST_DB=True
-      - LIMIT_TIME_CPU=2400
-      - LIMIT_TIME_REAL=4800
+      PYTHONDONTWRITEBYTECODE: "True"
+      MARABUNTA_ALLOW_SERIE: "True"
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+      DB_NAME: db
+      LIST_DB: "True"
+      DB_FILTER: .*
+      DEMO: "True"
+      WORKERS: 0
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`)"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`) && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${COMPOSE_PROJECT_NAME}.localhost`)
+        && PathPrefix(`/longpolling/`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=${COMPOSE_PROJECT_NAME}odoo"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
@@ -38,7 +45,7 @@ services:
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlExposeHeaders=Content-Length,Content-Range"
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.addVaryHeader=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.middlewares=${COMPOSE_PROJECT_NAME}corsHeader"
-      - "docky.help=${COMPOSE_PROJECT_NAME}.localhost"
+      - "docky.help=http://${COMPOSE_PROJECT_NAME}.localhost"
     links:
       - db
     networks:
@@ -49,3 +56,7 @@ services:
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
+      - ./backup:/backup
+      - ./shared:/shared
+      - ./.home:/home/odoo
+version: "3.8"

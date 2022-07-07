@@ -1,26 +1,26 @@
 services:
   odoo:
-    build: 
+    build:
       context: ./odoo
       target: prod
     image: "${BUILD_NAME}"
     environment:
-      - MARABUNTA_MODE=demo
-      - MIGRATE=false
-      - ODOO_BASE_URL=https://${DOMAIN}
-      - SENTRY=True
-      - PGSSLMODE=require
-      - DB_NAME=${BUILD_NAME}
-      - PGDATABASE=${BUILD_NAME}
-      - DB_USER=${CI_PROJECT_NAME}
-      - PGUSER=${CI_PROJECT_NAME}
-      - DB_HOST=pgci.home.arpa
-      - PGHOST=pgci.home.arpa
+      ODOO_BASE_URL: https://${DOMAIN}
+      ODOO_REPORT_URL: http://ci-${BUILD_NAME}:8069
+      SENTRY: True
+      PGSSLMODE: require
+      DB_NAME: $DB_NAME
+      DB_USER: $PGUSER
+      DB_HOST: $PGHOST
+      DB_PASSWORD: $PGPASSWORD
+      # TODO discuss if we want/need to have a "ci" running env
+      RUNNING_ENV: preprod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${DOMAIN}`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.tls=false"
-      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${DOMAIN}`) && PathPrefix(`/longpolling/`)"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.rule=Host(`${DOMAIN}`) &&
+        PathPrefix(`/longpolling/`)"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.tls=false"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.service=${COMPOSE_PROJECT_NAME}odoo"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-long.service=${COMPOSE_PROJECT_NAME}odoo_long"
@@ -36,9 +36,12 @@ services:
       - type: volume
         source: filestore
         target: /data/odoo/filestore
+      - type: bind
+        source: ./shared
+        target: /shared
 volumes:
   filestore:
 networks:
   traefik:
     external: true
-version: '3.7'
+version: "3.8"
