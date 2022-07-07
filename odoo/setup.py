@@ -1,17 +1,13 @@
-from setuptools import setup, find_packages
-
-with open("VERSION") as fd:
-    version = fd.read().strip()
+from setuptools import setup
 
 setup(
-    name="my-project-name",
-    version=version,
-    description="project description",
+    name="Custom",
+    version=14.0,
+    description="Custom Project",
     license="GNU Affero General Public License v3 or later (AGPLv3+)",
-    author="Author...",
-    author_email="email...",
-    url="https://akretion.com",
-    packages=["songs"] + ["songs.%s" % p for p in find_packages("./songs")],
+    author="Akretion",
+    author_email="contact@akretion.com",
+    url="https://www.akretion.com",
     include_package_data=True,
     classifiers=[
         "Development Status :: 4 - Beta",
