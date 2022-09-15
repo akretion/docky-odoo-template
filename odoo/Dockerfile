@@ -1,4 +1,4 @@
-FROM camptocamp/odoo-project:14.0-latest as base
+FROM ghcr.io/camptocamp:14.0-latest as base
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git \
     && apt install postgresql-client-common
