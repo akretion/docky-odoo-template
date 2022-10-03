@@ -1,4 +1,17 @@
+# Configure jinja2 defaults to make syntax highlighters happy
+_templates_suffix: .jinja
+_envops:
+  block_end_string: "%}"
+  block_start_string: "{%"
+  comment_end_string: "#}"
+  comment_start_string: "{#"
+  keep_trailing_newline: true
+  variable_end_string: "}}"
+  variable_start_string: "{{"
+
 project_name: ""
+
+# TODO remove this env question
 env:
   type: str
   choices:
@@ -7,20 +20,29 @@ env:
     - ci
     - other
   default: dev
+
+# TODO remove UID question
 UID:
   type: int
   help: "Only for dev"
   default: 1000
 
+# TODO make it simplier
+# why not always using branch version name ?
 preprod_branch:
   type: str
-  default: 14.0
-  help: "The name of the main branch, where the preprod is executed. (ex: main, master, 14.0)"
+  default: 16.0
+  help: "The name of the main branch, where the preprod is executed. (ex: main, master, 14.0, 16.0)"
+
+odoo_version:
+  type: str
+  choices:
+     - 14.0
+     - 16.0
 
 _secret_questions:
   - env
 
-_templates_suffix: .jinja
 _skip_if_exists:
   - odoo/spec.yaml
   - odoo/requirements.txt
