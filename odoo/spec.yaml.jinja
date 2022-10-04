@@ -1,3 +1,4 @@
+{% if odoo_version != "14.0" %}
 social:
     modules:
         - mail_debrand
@@ -36,3 +37,4 @@ server-brand:
         - oca 14.0
         - oca refs/pull/39/head # PR for 'remove_odoo_enterprise'
         # - ak somebranch
+{% endif %}

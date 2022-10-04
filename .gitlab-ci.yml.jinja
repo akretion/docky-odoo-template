@@ -1,6 +1,6 @@
 stages:
   - maintenance
-  - lint
+#  - lint
   - build
   - test
   - migrate
@@ -8,8 +8,7 @@ stages:
   - stop_review
   - review_preprod
   - docker_push
-  - deploy
-  - sentry
+#  - sentry
 
 # Variables to be set on group / project in gitlab variables:
 
@@ -23,7 +22,6 @@ before_script:
     bin/
   - export PATH=$PATH:${PWD}/bin
   - export DOCKER_BUILDKIT=1
-  - . ~/.bash_secret_vars
   - cp .env-ci .env
   - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
   - export CI_DOMAIN=${CI_DOMAIN}
@@ -38,43 +36,43 @@ before_script:
     ODOO_REPORT_URL=http://$BUILD_NAME:8069
     EOF
   - mkdir shared
+  # if you want to store secrets for ci uncomment the following line
+  #- sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
 
 # Pre-commit lint
-lint:
-  stage: lint
-  script:
-    - pre-commit install
-    - pre-commit run --all --show-diff-on-failure --verbose --color always
-  only:
-    - merge_requests
-    - "{{ preprod_branch }}"
-
+# TODO integrate OCA linter before
+#lint:
+#  stage: lint
+#  script:
+#    - pre-commit install
+#    - pre-commit run --all --show-diff-on-failure --verbose --color always
+#  only:
+#    - merge_requests
+#    - "{{ odoo_version }}"
+#
 # Build the container (with soft bump if needed)
 build:
   stage: build
   script:
     - ./bump
-    - docker-compose build
+    - docker-compose build --pull
   only:
     - merge_requests
-    - "{{ preprod_branch }}"
+    - "{{ odoo_version }}"
 
 test:
   stage: test
   script:
     - echo "DB_NAME=${BUILD_NAME}_test" >> .env
-    # exclude product_code_unique and product_usability to install it after
-    - export EXCLUDE_DEPENDENCIES=product_code_unique,product_usability
-    - export MARABUNTA_MODE=demo
     - export PGDATABASE="${BUILD_NAME}_test"
     - docker-compose kill
     - ci-drop-db $PGDATABASE
-    - docker-compose run odoo gosu odoo initdb ${BUILD_NAME}_test --cache-prefix
+    - docker-compose run odoo initdb ${BUILD_NAME}_test --cache-prefix
       ${CI_PROJECT_NAME:0:7}
-    - docker-compose run odoo gosu odoo runtests
+    - docker-compose run odoo runtests
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
-    - if: $CI_COMMIT_REF_NAME == "{{ preprod_branch }}"
+    - if: $CI_COMMIT_REF_NAME == "{{ odoo_version }}"
   artifacts:
     reports:
       coverage_report:
@@ -88,11 +86,11 @@ migrate:
     - export PGDATABASE=$BUILD_NAME
     - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
-    - ci-getdb
+    - ci-getdevdb
     - docker-compose run odoo odoo --stop-after-init
   only:
     - merge_requests
-    - "{{ preprod_branch }}"
+    - "{{ odoo_version }}"
 
 # Run the container used for the review
 review:
@@ -136,7 +134,7 @@ review_preprod:
     name: preprod
     url: https://${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}
   only:
-    - "{{ preprod_branch }}"
+    - "{{ odoo_version }}"
 
 # Send the docker image to the registry in order to be downloaded in prod
 docker_push:
@@ -149,7 +147,7 @@ docker_push:
     - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$TAG
     - docker push $CI_REGISTRY_IMAGE:$TAG
   rules:
-    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ preprod_branch }}"
+    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ odoo_version }}"
 
 bump:
   stage: review_preprod
@@ -158,29 +156,29 @@ bump:
     - git remote set-url origin "https://gitlab-ci-token:${CI_UPLOAD_TOKEN}@${url_host}"
     - ./bump --commit-branch $CI_COMMIT_REF_NAME
   rules:
-    - if: $CI_COMMIT_TITLE !~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ preprod_branch }}"
+    - if: $CI_COMMIT_TITLE !~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ odoo_version }}"
       when: manual
   # allow_failure is needed due to gitlab issue
   # https://gitlab.com/gitlab-org/gitlab/-/issues/249524
   allow_failure: true
 
 # TODO rework on sentry maybe merge with bump ?
-sentry:
-  stage: sentry
-  image:
-    name: getsentry/sentry-cli
-    entrypoint: [""]
-  script:
-    - env | grep SENTRY > sentry.env
-    - docker run --env-file sentry.env getsentry/sentry-cli info
-    - export PWD=`pwd`
-    - echo $PWD
-    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $CI_COMMIT_SHORT_SHA --finalize
-    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $CI_COMMIT_SHORT_SHA --auto
-  only:
-    - "{{ preprod_branch }}"
-  needs:
-    - deploy
+#sentry:
+#  stage: sentry
+#  image:
+#    name: getsentry/sentry-cli
+#    entrypoint: [""]
+#  script:
+#    - env | grep SENTRY > sentry.env
+#    - docker run --env-file sentry.env getsentry/sentry-cli info
+#    - export PWD=`pwd`
+#    - echo $PWD
+#    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $CI_COMMIT_SHORT_SHA --finalize
+#    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $CI_COMMIT_SHORT_SHA --auto
+#  only:
+#    - "{{ odoo_version }}"
+#  needs:
+#    - docker_push
 
 # Delete the data associated with the stopped containers
 # Runs automatically every night
@@ -190,7 +188,7 @@ prune_docker:
     - docker system prune --all --volumes --force
   when: manual
   only:
-    - "{{ preprod_branch }}"
+    - "{{ odoo_version }}"
 
 # Start/Restart kwhtmltopdf
 kwkhtmltopdf:
@@ -200,4 +198,4 @@ kwkhtmltopdf:
     - docker-compose -f kwkhtmltopdf-traefik.docker-compose.yml up -d
   when: manual
   only:
-    - "{{ preprod_branch }}"
+    - "{{ odoo_version }}"

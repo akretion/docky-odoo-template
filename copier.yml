@@ -27,18 +27,12 @@ UID:
   help: "Only for dev"
   default: 1000
 
-# TODO make it simplier
-# why not always using branch version name ?
-preprod_branch:
-  type: str
-  default: 16.0
-  help: "The name of the main branch, where the preprod is executed. (ex: main, master, 14.0, 16.0)"
-
 odoo_version:
   type: str
   choices:
      - 14.0
      - 16.0
+  default: 16.0
 
 _secret_questions:
   - env

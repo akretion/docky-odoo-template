@@ -7,7 +7,7 @@ services:
     environment:
       ODOO_BASE_URL: https://${DOMAIN}
       ODOO_REPORT_URL: http://ci-${BUILD_NAME}:8069
-      SENTRY: True
+      #SENTRY: True TODO FIXME
       PGSSLMODE: require
       DB_NAME: $DB_NAME
       DB_USER: $PGUSER
