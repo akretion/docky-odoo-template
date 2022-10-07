@@ -59,4 +59,4 @@ services:
       - ./backup:/backup
       - ./shared:/shared
       - ./.home:/home/odoo
-version: "3.8"
+version: "3.9"
