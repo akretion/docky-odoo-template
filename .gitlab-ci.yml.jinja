@@ -29,7 +29,7 @@ build:
   stage: build
   script:
     - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/src
-    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/src odoo/external-src
+    - btrfs subvolume snapshot ~gitlab-runner/builds/btrfscache_${CI_PROJECT_NAME}/odoo/external-src odoo/external-src
     - cd odoo && ak clone && ak sparse && ak build && cd ..
     - DOCKER_BUILDKIT=1 docker-compose build
   only:
