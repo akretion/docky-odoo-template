@@ -11,31 +11,12 @@ _envops:
 
 project_name: ""
 
-# TODO remove this env question
-env:
-  type: str
-  choices:
-    - dev
-    - prod
-    - ci
-    - other
-  default: dev
-
-# TODO remove UID question
-UID:
-  type: int
-  help: "Only for dev"
-  default: 1000
-
 odoo_version:
   type: str
   choices:
      - 16.0
      - 14.0
   default: 16.0
-
-_secret_questions:
-  - env
 
 _skip_if_exists:
   - odoo/spec.yaml
