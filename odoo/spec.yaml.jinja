@@ -1,40 +1,11 @@
-{% if odoo_version != "14.0" %}
-social:
+queue:
     modules:
-        - mail_debrand
-    src: https://github.com/OCA/social 14.0
+       - queue_job
+    src: https://github.com/oca/queue {{ odoo_version }}
 
-server-auth:
-  modules:
-    - auth_oidc
-  src: https://github.com/OCA/server-auth 14.0
-
-# Recommanded way: prefer short syntax without merges
-# all stable modules from main branch
-server-tools:
-  modules:
-    - base_technical_user
-  src: https://github.com/OCA/server-tools 14.0
-
-# and an dedicated entry (dir) for each
-# pending branch in order to avoid merges.
-server-tools-sentry:
-  modules:
-    - sentry
-  src: https://github.com/akretion/server-tools 14.0-mig-sentry-sdk
-
-# Alternative syntax
-# not recommanded
-# can also be used with multiple patch on the same module
-server-brand:
+server-env:
     modules:
-      - disable_odoo_online
-      - remove_odoo_enterprise
-    remotes:
-        oca: https://github.com/OCA/server-brand
-    #   ak: https://github.com/akretion/server-brand
-    merges:
-        - oca 14.0
-        - oca refs/pull/39/head # PR for 'remove_odoo_enterprise'
-        # - ak somebranch
-{% endif %}
+       - data_encryption
+       - server_environment
+       - server_environment_data_encryption
+    src: https://github.com/oca/server-env {{ odoo_version }}

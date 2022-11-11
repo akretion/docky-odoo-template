@@ -21,12 +21,13 @@ services:
     environment:
       PYTHONDONTWRITEBYTECODE: "True"
       MARABUNTA_ALLOW_SERIE: "True"
-      DB_USER: odoo
-      DB_PASSWORD: odoo
-      DB_NAME: db
+      PGDATABASE: db
+      PGHOST: db
+      PGPASSWORD: odoo
+      PGUSER: odoo
       LIST_DB: "True"
       DB_FILTER: .*
-      DEMO: "True"
+      WITHOUT_DEMO: "False"
       WORKERS: 0
     labels:
       - "traefik.enable=true"

@@ -43,3 +43,51 @@ On the first `docky run`, docky will download the Odoo image referenced in the [
 To reload the Odoo docker image or to update your docky after changing you environment variables, run `docky build`.
 
 More information on : [docky](https://github.com/akretion/docky).
+
+
+
+
+
+# Spec Tips (TODO move in ak doc ?)
+
+```
+social:
+    modules:
+        - mail_debrand
+    src: https://github.com/OCA/social 14.0
+
+server-auth:
+  modules:
+    - auth_oidc
+  src: https://github.com/OCA/server-auth 14.0
+
+# Recommanded way: prefer short syntax without merges
+# all stable modules from main branch
+server-tools:
+  modules:
+    - base_technical_user
+  src: https://github.com/OCA/server-tools 14.0
+
+# and an dedicated entry (dir) for each
+# pending branch in order to avoid merges.
+server-tools-sentry:
+  modules:
+    - sentry
+  src: https://github.com/akretion/server-tools 14.0-mig-sentry-sdk
+
+# Alternative syntax
+# not recommanded
+# can also be used with multiple patch on the same module
+server-brand:
+    modules:
+      - disable_odoo_online
+      - remove_odoo_enterprise
+    remotes:
+        oca: https://github.com/OCA/server-brand
+    #   ak: https://github.com/akretion/server-brand
+    merges:
+        - oca 14.0
+        - oca refs/pull/39/head # PR for 'remove_odoo_enterprise'
+        # - ak somebranch
+```
+
