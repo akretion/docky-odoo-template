@@ -50,12 +50,11 @@ before_script:
 #  only:
 #    - merge_requests
 #    - "{{ odoo_version }}"
-#
-# Build the container (with soft bump if needed)
+
+# Build the container
 build:
   stage: build
   script:
-    - ./bump
     - docker-compose build --pull
   only:
     - merge_requests
@@ -149,19 +148,6 @@ docker_push:
     - docker push $CI_REGISTRY_IMAGE:$TAG
   rules:
     - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ odoo_version }}"
-
-bump:
-  stage: review_preprod
-  script:
-    - url_host=`git remote get-url origin | sed -e "s/https:\/\/gitlab-ci-token:.*@//g"`
-    - git remote set-url origin "https://gitlab-ci-token:${CI_UPLOAD_TOKEN}@${url_host}"
-    - ./bump --commit-branch $CI_COMMIT_REF_NAME
-  rules:
-    - if: $CI_COMMIT_TITLE !~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ odoo_version }}"
-      when: manual
-  # allow_failure is needed due to gitlab issue
-  # https://gitlab.com/gitlab-org/gitlab/-/issues/249524
-  allow_failure: true
 
 # TODO rework on sentry maybe merge with bump ?
 #sentry:
