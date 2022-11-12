@@ -9,11 +9,11 @@ services:
     restart: always
     image: TODO
     environment:
-      DB_HOST: $PGHOST
-      DB_PORT: $PGPORT
-      DB_PASSWORD: $PGPASSWORD
-      DB_USER: $PGUSER
-      DB_NAME: $PGDATABASE
+      PGDATABASE: $DB_NAME
+      PGHOST: $PGHOST
+      PGPASSWORD: $PGPASSWORD
+      PGUSER: $PGUSER
+      PGPORT: $PGPORT
       LOG_LEVEL: warn
       ODOO_BASE_URL: TODO
       PGSSLMODE: require

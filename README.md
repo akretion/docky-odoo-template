@@ -45,6 +45,12 @@ To reload the Odoo docker image or to update your docky after changing you envir
 More information on : [docky](https://github.com/akretion/docky).
 
 
+# Bump and Migration
+
+When creating migration script (pre, post...) you can name the directory "0.0.0"
+Indeed Odoo always run migration script with the version "0.0.0" so you can use this as
+"current" migration script for your PR.
+Then when you will run the cmd "./bump" it will set the right version number.
 
 
 

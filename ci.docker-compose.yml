@@ -9,10 +9,10 @@ services:
       ODOO_REPORT_URL: http://ci-${BUILD_NAME}:8069
       #SENTRY: True TODO FIXME
       PGSSLMODE: require
-      DB_NAME: $DB_NAME
-      DB_USER: $PGUSER
-      DB_HOST: $PGHOST
-      DB_PASSWORD: $PGPASSWORD
+      PGDATABASE: $DB_NAME
+      PGHOST: $PGHOST
+      PGPASSWORD: $PGPASSWORD
+      PGUSER: $PGUSER
       # TODO discuss if we want/need to have a "ci" running env
       RUNNING_ENV: preprod
     labels:

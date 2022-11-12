@@ -2,6 +2,7 @@
 # pylint: disable=print-used
 
 import os
+import ast
 import subprocess
 from datetime import datetime
 
@@ -10,65 +11,47 @@ import yaml
 
 
 @click.command()
-@click.option("--commit-branch", type=str, help="Commit the bump with git")
-def main(commit_branch):
-    datetime.now()
-    version = datetime.now().strftime("%y.%m.%d0")
+def main():
+    version = datetime.now().strftime("%y%m.%d.0")
+    with open("odoo/local-src/custom_all/__manifest__.py") as f:
+        data = ast.literal_eval(f.read())
+    last_version = data["version"]
 
-    with open("odoo/migration.yml", "r") as f:
-        config = yaml.safe_load(f)
+    # increment last digit if needed
+    if last_version >= version:
+        year_month, day, inc = last_version.split(".")
+        inc = str(int(inc) + 1)
+        version = ".".join([year_month, day, inc])
 
-    versions = [x["version"] for x in config["migration"]["versions"]]
+    # increment modules versions
+    for module_name in os.listdir("odoo/local-src"):
+        module_path = f"odoo/local-src/{module_name}"
+        manifest_path = f"{module_path}/__manifest__.py"
+        # Check if it's an odoo module
+        if os.path.exists(manifest_path):
+            update_version = False
+            # in case of pending migration script increment it
+            if os.path.exists(f"{module_path}/migrations/0.0.0"):
+                subprocess.run((
+                    f"git mv {module_path}/migrations/0.0.0 "
+                    f"{module_path}/migrations/{version}"
+                    ),shell=True, check=True)
+                update_version = True
+            if update_version or module_name == "custom_all":
+                print(f"Update version of {module_name} to {version}")
+                with open(manifest_path) as f:
+                    raw_data = f.read()
+                    data = ast.literal_eval(raw_data)
+                with open(manifest_path, "w") as f:
+                    raw_data = raw_data.replace(data["version"], version)
+                    f.write(raw_data)
+                subprocess.run(f"git add {manifest_path}", shell=True, check=True)
 
-    # Increment last version digit if needed
-    idx = 1
-    while version in versions:
-        version = f"{version[0:8]}{idx}"
-        idx += 1
-
-    pre_migration = []
-    post_migration = []
-
-    if os.path.exists("odoo/script/current"):
-        subprocess.run(
-            f"git mv odoo/script/current odoo/script/{version}", shell=True, check=True
-        )
-        for filename in os.listdir(f"odoo/script/{version}"):
-            filepath = f"/odoo/script/{version}/{filename}"
-            if filename.startswith("pre"):
-                pre_migration.append(filepath)
-            elif filename.startswith("post"):
-                post_migration.append(filepath)
-    elif not commit_branch:
-        print("Current is empty do nothing")
-        return
-
-    todo = pre_migration + ["click-odoo-update"] + post_migration
-
-    config["migration"]["versions"].append(
-        {
-            "version": version,
-            "modes": {
-                "prod": {
-                    "operations": {
-                        "pre": todo,
-                    }
-                }
-            },
-        }
-    )
-    # Only keep the 10 last
-    config["migration"]["versions"] = config["migration"]["versions"][-10:]
-    with open("odoo/migration.yml", "w") as f:
-        yaml.dump(config, f, sort_keys=False)
-
-    if commit_branch:
-        subprocess.run("git add odoo/migration.yml", shell=True, check=True)
-        subprocess.run(f"git commit -m'Bump version {version}'", shell=True, check=True)
-        subprocess.run(f"git tag {version}", shell=True, check=True)
-        subprocess.run(
-            f"git push origin HEAD:{commit_branch} --tag", shell=True, check=True
-        )
+    #subprocess.run(f"git commit -m'Bump version {version}'", shell=True, check=True)
+    #subprocess.run(f"git tag {version}", shell=True, check=True)
+    #subprocess.run(
+    #    f"git push origin HEAD:{commit_branch} --tag", shell=True, check=True
+    #)
 
 
 if __name__ == "__main__":
