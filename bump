@@ -47,11 +47,9 @@ def main():
                     f.write(raw_data)
                 subprocess.run(f"git add {manifest_path}", shell=True, check=True)
 
-    #subprocess.run(f"git commit -m'Bump version {version}'", shell=True, check=True)
-    #subprocess.run(f"git tag {version}", shell=True, check=True)
-    #subprocess.run(
-    #    f"git push origin HEAD:{commit_branch} --tag", shell=True, check=True
-    #)
+    subprocess.run(f"git commit -m'Bump version {version}'", shell=True, check=True)
+    subprocess.run(f"git tag {version}", shell=True, check=True)
+    subprocess.run(f"git push origin --tag", shell=True, check=True)
 
 
 if __name__ == "__main__":

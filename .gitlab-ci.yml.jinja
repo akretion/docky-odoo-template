@@ -36,8 +36,9 @@ before_script:
     ODOO_REPORT_URL=http://$BUILD_NAME:8069
     EOF
   - mkdir shared
-  # if you want to store secrets for ci uncomment the following line
-  #- sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
+  {% if use_secret %}
+  - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
+  {% endif %}
 
 # Pre-commit lint
 # TODO integrate OCA linter before

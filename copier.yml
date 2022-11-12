@@ -9,7 +9,9 @@ _envops:
   variable_end_string: "}}"
   variable_start_string: "{{"
 
-project_name: ""
+project_name:
+  type: str
+  help: Project Name
 
 odoo_version:
   type: str
@@ -17,6 +19,11 @@ odoo_version:
      - 16.0
      - 14.0
   default: 16.0
+  help: Odoo version
+
+use_secret:
+  type: bool
+  help: generate docker-compose dedicate file for secret
 
 _skip_if_exists:
   - odoo/spec.yaml
