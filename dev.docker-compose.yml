@@ -20,7 +20,6 @@ services:
       target: dev
     environment:
       PYTHONDONTWRITEBYTECODE: "True"
-      MARABUNTA_ALLOW_SERIE: "True"
       PGDATABASE: db
       PGHOST: db
       PGPASSWORD: odoo
