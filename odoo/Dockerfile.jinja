@@ -19,7 +19,6 @@ RUN --mount=type=cache,target=/root/.cache cd /odoo && pip install -r requiremen
 # Copy local project
 COPY ./local-src /odoo/local-src
 COPY ./script /odoo/script
-COPY ./migration.yml /odoo/
 
 FROM base as dev
 
