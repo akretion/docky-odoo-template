@@ -26,7 +26,8 @@ use_secret:
   help: generate docker-compose dedicate file for secret
 
 _skip_if_exists:
-  - odoo/local-src
+  - README.rst # TODO how to manage readme ?
+  - odoo/local-src/*
   - odoo/spec.yaml
   - odoo/odoo-spec.yaml
   - odoo/requirements.txt
