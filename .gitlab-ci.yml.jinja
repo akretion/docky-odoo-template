@@ -1,6 +1,6 @@
 stages:
   - maintenance
-#  - lint
+  # - lint
   - build
   - test
   - migrate
@@ -8,7 +8,7 @@ stages:
   - stop_review
   - review_preprod
   - docker_push
-#  - sentry
+  # - sentry
 
 # Variables to be set on group / project in gitlab variables:
 
@@ -71,7 +71,9 @@ test:
       ${CI_PROJECT_NAME:0:7}
     - docker-compose run odoo runtests
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
+    - if:
+        $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~
+        /Skiptest/
     - if: $CI_COMMIT_REF_NAME == "{{ odoo_version }}"
   artifacts:
     reports:

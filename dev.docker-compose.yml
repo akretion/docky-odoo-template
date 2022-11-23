@@ -39,7 +39,7 @@ services:
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo.loadbalancer.server.port=8069"
       - "traefik.http.services.${COMPOSE_PROJECT_NAME}odoo_long.loadbalancer.server.port=8072"
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowMethods=
-         GET,POST,OPTIONS,PUT"
+        GET,POST,OPTIONS,PUT"
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowOriginList=*"
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlAllowHeaders=DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,api-key,partner-email,authorization,sess-cart-id,website-unique-key"
       - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}corsHeader.headers.accessControlExposeHeaders=Content-Length,Content-Range"

@@ -26,8 +26,8 @@ services:
           root.shopinvader.bind_products:4,
           root.search_engine.recompute:4,
           root.search_engine.synchronize:4
-     # ENCRYPTION_KEY_DEV=
-     # SENTRY_DSN=
+      # ENCRYPTION_KEY_DEV=
+      # SENTRY_DSN=
       RUNNING_ENV: $ENV
       UNACCENT: "True"
     hostname: ${ENV}-${COMPOSE_PROJECT_NAME}
