@@ -1,8 +1,0 @@
-migration:
-  options:
-    install_command: odoo
-  versions:
-    - version: setup
-      addons:
-        upgrade:
-          - web
