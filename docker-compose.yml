@@ -34,4 +34,4 @@ services:
     labels:
       docky.main.service: true
       docky.user: odoo
-version: '3.9'
+version: "3.9"
