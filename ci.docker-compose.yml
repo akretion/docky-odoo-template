@@ -44,4 +44,4 @@ volumes:
 networks:
   traefik:
     external: true
-version: "3.9"
+version: "3.7"
