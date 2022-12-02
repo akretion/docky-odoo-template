@@ -28,6 +28,7 @@ services:
       DB_FILTER: .*
       WITHOUT_DEMO: "False"
       WORKERS: 0
+      ODOO_REPORT_URL: http://odoo:8069
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -48,6 +49,7 @@ services:
       - "docky.help=http://${COMPOSE_PROJECT_NAME}.localhost"
     links:
       - db
+      - kwkhtmltopdf
     networks:
       - local
       - traefik
@@ -59,4 +61,8 @@ services:
       - ./backup:/backup
       - ./shared:/shared
       - ./.home:/home/odoo
+  kwkhtmltopdf:
+    image: acsone/kwkhtmltopdf
+    networks:
+      - local
 version: "3.7"
