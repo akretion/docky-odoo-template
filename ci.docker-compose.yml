@@ -1,4 +1,25 @@
 services:
+  mailhog:
+    # TODO we should take a look to this
+    # https://github.com/axllent/mailpit
+    # it support smtp auth
+    image: mailhog/mailhog
+    container_name: "mailhog"
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mailhog.rule=Host(`${CI_PROJECT_NAME}_mailhog.${CI_DOMAIN}`)"
+      - "traefik.http.routers.mailhog.tls=false"
+      - "traefik.http.routers.mailhog.service=mailhog"
+      - "traefik.http.services.mailhog.loadbalancer.server.port=8025"
+      - "traefik.http.routers.mailhog.middlewares=mailhog"
+      # Note: when used in docker-compose.yml all dollar signs in the hash need to be doubled for escaping.
+      # To create user:password pair, it's possible to use this command:
+      # echo $(htpasswd -nB admin) | sed -e s/\\$/\\$\\$/g
+      - "traefik.http.middlewares.mailhog.basicauth.users=admin:${MAIL_CI_PASS}"
+    ports:
+      - 10.10.10.207:1025:1025
   odoo:
     build:
       context: ./odoo
