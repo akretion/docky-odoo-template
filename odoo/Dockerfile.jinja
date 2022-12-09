@@ -18,7 +18,7 @@ COPY ./requirements.txt /odoo/
 RUN --mount=type=cache,target=/root/.cache cd /odoo && pip install -r requirements.txt
 
 # Copy local project
-COPY odoo/start-entrypoint.d /odoo/start-entrypoint.d
+COPY ./start-entrypoint.d /odoo/start-entrypoint.d
 COPY ./local-src /odoo/local-src
 COPY ./scripts /odoo/scripts
 
