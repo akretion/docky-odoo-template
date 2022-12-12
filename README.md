@@ -1,3 +1,5 @@
+# PLEASE DO NOT USE THIS BRANCH, USE `main` BRANCH /!\
+
 # Basic Odoo project template used by [docky](https://github.com/akretion/docky)
 
 This repo contains all the basic files needed to create an Odoo project from scratch using the [docky](https://github.com/akretion/docky) and [ak](https://github.com/akretion/ak) command-line tools developed by [Akretion](https://akretion.com).
