@@ -3,6 +3,7 @@ stages:
   # - lint
   - build
   - test
+  - prepare
   - migrate
   - review
   - stop_review
@@ -17,10 +18,6 @@ stages:
 # SENTRY_DSN
 
 before_script:
-  - rm -rf bin
-  # TODO remove ci-tools, should be public
-  - git clone $CI_TOOLS_REPOSITORY_URL bin/
-  - export PATH=$PATH:${PWD}/bin
   - export DOCKER_BUILDKIT=1
   - cp .env-ci .env
   - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
@@ -66,7 +63,7 @@ test:
     - echo "DB_NAME=${BUILD_NAME}_test" >> .env
     - export PGDATABASE="${BUILD_NAME}_test"
     - docker-compose kill
-    - ci-drop-db $PGDATABASE
+    - dropdb --force --if-exists ${BUILD_NAME}_test
     - docker-compose run odoo initdb ${BUILD_NAME}_test --cache-prefix
       ${CI_PROJECT_NAME:0:7}
     - docker-compose run odoo runtests
@@ -81,6 +78,16 @@ test:
         coverage_format: cobertura
         path: shared/coverage.xml
 
+# Drop the database to restart from a fresh one
+drop_database:
+  stage: prepare
+  script:
+    - docker-compose kill
+    - dropdb --force --if-exists $BUILD_NAME
+  rules:
+    # if keepdb tag is set this job will not run
+    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/
+
 # Run the database changes (click-odoo-update or migrate marabunta)
 migrate:
   stage: migrate
@@ -88,9 +95,12 @@ migrate:
     - export PGDATABASE=$BUILD_NAME
     - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
-    # Replace this line with ci-getdb if you want to use a templated database
-    - ci-getdevdb
-    - docker-compose run odoo odoo --stop-after-init
+    # Replace this lines with the following ones if you want to use a template database
+    # - createdb $BUILD_NAME -T ${BUILD_NAME}_template || true
+    # - docker-compose run odoo click-odoo-update
+    - createdb $BUILD_NAME || true
+    - docker-compose run odoo odoo -i base --stop-after-init
+    # advice: Instead of base, install a module that contains your dependencies
   only:
     - merge_requests
     - "{{ odoo_version }}"
@@ -118,6 +128,7 @@ stop_review:
   stage: review
   script:
     - docker-compose down --rmi local --volumes
+    - dropdb --if-exists $BUILD_NAME
   environment:
     name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
     action: stop
