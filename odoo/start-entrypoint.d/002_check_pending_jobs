@@ -2,13 +2,13 @@
 
 if [ "$( psql -tAc "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" )" != '1' ]
 then
-    echo "Database does not exist, ignoring script"
+    echo "Database $DB_NAME does not exist, ignoring script"
     exit 0
 fi
 
 if [ "$( psql -tAc "SELECT 1 FROM information_schema.tables WHERE table_name='queue_job'" )" != '1' ]
 then
-    echo "Queue Job not installed, ignoring script"
+    echo "Queue Job not installed in database $DB_NAME, ignoring script"
     exit 0
 fi
 
