@@ -1,3 +1,5 @@
+# PLEASE DO NOT USE THIS BRANCH, USE `main` BRANCH /!\
+
 # Ak recipe for basic odoo project
 
 
