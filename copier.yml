@@ -17,6 +17,7 @@ odoo_version:
   type: str
   choices:
      - 16.0
+     - 15.0
      - 14.0
   default: 16.0
   help: Odoo version
