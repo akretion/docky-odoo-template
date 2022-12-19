@@ -19,7 +19,7 @@ services:
       MARABUNTA_MODE: ${MARABUNTA_MODE:-prod}
       ODOO_REPORT_URL: http://odoo:8069
       #,queue_job,sentry?
-      QUEUE_JOB_CHANNELS:
+      ODOO_QUEUE_JOB_CHANNELS:
           root:4,
           root.pattern.import:1,
           root.pattern.export:4,
