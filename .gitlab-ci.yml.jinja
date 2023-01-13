@@ -3,7 +3,7 @@ stages:
   # - lint
   - build
   - test
-  - prepare
+  - refresh
   - migrate
   - review
   - stop_review
@@ -79,31 +79,58 @@ test:
         path: shared/coverage.xml
 
 # Drop the database to restart from a fresh one
-drop_database:
-  stage: prepare
+refresh_copy_db:
+  stage: refresh
   script:
     - docker-compose kill
     - dropdb --force --if-exists $BUILD_NAME
+    - createdb $BUILD_NAME -T ${CI_PROJECT_NAME}_template || true
   rules:
     # if keepdb tag is set this job will not run
-    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/
+    # if emptydb tag is set this job will not run
+    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/ && $CI_MERGE_REQUEST_LABELS !~ /.*emptydb.*/
+
+refresh_empty_db:
+  stage: refresh
+  script:
+    - docker-compose kill
+    - dropdb --force --if-exists $BUILD_NAME
+    - createdb $BUILD_NAME || true
+  rules:
+    # if keepdb tag is set this job will not run
+    # if emptydb tag is set this job will run
+    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/ && $CI_MERGE_REQUEST_LABELS =~ /.*emptydb.*/
 
 # Run the database changes (click-odoo-update or migrate marabunta)
-migrate:
+update_db:
   stage: migrate
   script:
     - export PGDATABASE=$BUILD_NAME
     - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
-    # Replace this lines with the following ones if you want to use a template database
-    # - createdb $BUILD_NAME -T ${BUILD_NAME}_template || true
-    # - docker-compose run odoo click-odoo-update
-    - createdb $BUILD_NAME || true
+    - docker-compose run odoo click-odoo-update
+  only:
+    - merge_requests
+    - "{{ odoo_version }}"
+  rules:
+    # if emptydb tag is set this job will not run
+    - if: $CI_MERGE_REQUEST_LABELS !~ /.*emptydb.*/
+
+# Initialize the database (by installing a module)
+init_db:
+  stage: migrate
+  script:
+    - export PGDATABASE=$BUILD_NAME
+    - echo "DB_NAME=$BUILD_NAME" >> .env
+    - docker-compose kill
     - docker-compose run odoo odoo -i base --stop-after-init
     # advice: Instead of base, install a module that contains your dependencies
   only:
     - merge_requests
     - "{{ odoo_version }}"
+  rules:
+    # if emptydb tag is set this job will run
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*emptydb.*/
 
 # Run the container used for the review
 review:
