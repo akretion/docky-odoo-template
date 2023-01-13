@@ -80,6 +80,7 @@ test:
     - if: $IS_MR == "true" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
     # Always run test in default branch
     - if: $IS_MR == null
+  coverage: '/TOTAL(\W+\d+){5}\%/'
   artifacts:
     reports:
       coverage_report:
