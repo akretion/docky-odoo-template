@@ -1,3 +1,23 @@
+# Variables to be set on group / project in gitlab variables:
+
+# CI_DOMAIN
+# CI_TOOLS_REPOSITORY_URL
+# SENTRY_DSN
+
+workflow:
+  # Only run the pipeline if this is the default branch or a MR
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      variables:
+        PIPELINE_NAME: 'MR pipeline: $CI_COMMIT_BRANCH'
+        IS_MR: "true"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        PIPELINE_NAME: 'default branch pipeline: $CI_COMMIT_BRANCH'
+    - if: $CI_COMMIT_BRANCH == "{{ odoo_version }}"
+      variables:
+        PIPELINE_NAME: '{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH'
+
 stages:
   - maintenance
   # - lint
@@ -10,12 +30,6 @@ stages:
   - review_preprod
   - docker_push
   # - sentry
-
-# Variables to be set on group / project in gitlab variables:
-
-# CI_DOMAIN
-# CI_TOOLS_REPOSITORY_URL
-# SENTRY_DSN
 
 before_script:
   - export DOCKER_BUILDKIT=1
@@ -44,18 +58,12 @@ before_script:
 #  script:
 #    - pre-commit install
 #    - pre-commit run --all --show-diff-on-failure --verbose --color always
-#  only:
-#    - merge_requests
-#    - "{{ odoo_version }}"
 
 # Build the container
 build:
   stage: build
   script:
     - docker-compose build --pull
-  only:
-    - merge_requests
-    - "{{ odoo_version }}"
 
 test:
   stage: test
@@ -68,10 +76,10 @@ test:
       ${CI_PROJECT_NAME:0:7}
     - docker-compose run odoo runtests
   rules:
-    - if:
-        $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_LABELS !~
-        /Skiptest/
-    - if: $CI_COMMIT_REF_NAME == "{{ odoo_version }}"
+    # Run tests in MR if there is no Skiptest tag
+    - if: $IS_MR == "true" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
+    # Always run test in default branch
+    - if: $IS_MR == null
   artifacts:
     reports:
       coverage_report:
@@ -84,11 +92,11 @@ refresh_copy_db:
   script:
     - docker-compose kill
     - dropdb --force --if-exists $BUILD_NAME
-    - createdb $BUILD_NAME -T ${CI_PROJECT_NAME}_template || true
+    - createdb $BUILD_NAME -T ${CI_PROJECT_NAME}_template
   rules:
     # if keepdb tag is set this job will not run
     # if emptydb tag is set this job will not run
-    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/ && $CI_MERGE_REQUEST_LABELS !~ /.*emptydb.*/
+    - if: $CI_MERGE_REQUEST_LABELS !~ /keepdb/ && $CI_MERGE_REQUEST_LABELS !~ /emptydb/
 
 refresh_empty_db:
   stage: refresh
@@ -99,7 +107,7 @@ refresh_empty_db:
   rules:
     # if keepdb tag is set this job will not run
     # if emptydb tag is set this job will run
-    - if: $CI_MERGE_REQUEST_LABELS !~ /.*keepdb.*/ && $CI_MERGE_REQUEST_LABELS =~ /.*emptydb.*/
+    - if: $CI_MERGE_REQUEST_LABELS !~ /keepdb/ && $CI_MERGE_REQUEST_LABELS =~ /emptydb/
 
 # Run the database changes (click-odoo-update or migrate marabunta)
 update_db:
@@ -109,12 +117,11 @@ update_db:
     - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
     - docker-compose run odoo click-odoo-update
-  only:
-    - merge_requests
-    - "{{ odoo_version }}"
   rules:
     # if emptydb tag is set this job will not run
-    - if: $CI_MERGE_REQUEST_LABELS !~ /.*emptydb.*/
+    - if: $CI_MERGE_REQUEST_LABELS !~ /emptydb/
+    # if keepdb is set, this job will run
+    - if: $CI_MERGE_REQUEST_LABELS =~ /keepdb/
 
 # Initialize the database (by installing a module)
 init_db:
@@ -125,12 +132,9 @@ init_db:
     - docker-compose kill
     - docker-compose run odoo odoo -i base --stop-after-init
     # advice: Instead of base, install a module that contains your dependencies
-  only:
-    - merge_requests
-    - "{{ odoo_version }}"
   rules:
-    # if emptydb tag is set this job will run
-    - if: $CI_MERGE_REQUEST_LABELS =~ /.*emptydb.*/
+    # if emptydb tag is set (and no keepdb) this job will run
+    - if: $CI_MERGE_REQUEST_LABELS =~ /emptydb/ && $CI_MERGE_REQUEST_LABELS !~ /keepdb/
 
 # Run the container used for the review
 review:
@@ -147,21 +151,22 @@ review:
     name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
     url: https://${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}.${CI_DOMAIN}
     on_stop: stop_review
-  only:
-    - merge_requests
+  rules:
+    - if: $IS_MR == "true"
 
 # Stop the container used for the review
 stop_review:
   stage: review
   script:
     - docker-compose down --rmi local --volumes
-    - dropdb --if-exists $BUILD_NAME
+    - dropdb ${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID} --if-exist
+    - dropdb ${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}_test --if-exist
   environment:
     name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
     action: stop
   when: manual
-  only:
-    - merge_requests
+  rules:
+    - if: $IS_MR == "true"
 
 # Start the preprod container
 review_preprod:
@@ -174,8 +179,8 @@ review_preprod:
   environment:
     name: preprod
     url: https://${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}
-  only:
-    - "{{ odoo_version }}"
+  rules:
+    - if: $IS_MR == null
 
 # Send the docker image to the registry in order to be downloaded in prod
 docker_push:
@@ -188,7 +193,7 @@ docker_push:
     - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$TAG
     - docker push $CI_REGISTRY_IMAGE:$TAG
   rules:
-    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $CI_COMMIT_BRANCH == "{{ odoo_version }}"
+    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $IS_MR == null
 
 # TODO rework on sentry maybe merge with bump ?
 #sentry:
@@ -203,8 +208,8 @@ docker_push:
 #    - echo $PWD
 #    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases new $CI_COMMIT_SHORT_SHA --finalize
 #    - docker run --env-file sentry.env -v $PWD:/work  getsentry/sentry-cli releases set-commits $CI_COMMIT_SHORT_SHA --auto
-#  only:
-#    - "{{ odoo_version }}"
+#  rules:
+#    - if: $IS_MR == null
 #  needs:
 #    - docker_push
 
@@ -215,8 +220,8 @@ prune_docker:
   script:
     - docker system prune --all --volumes --force
   when: manual
-  only:
-    - "{{ odoo_version }}"
+  rules:
+    - if: $IS_MR == null
 
 # Start/Restart kwhtmltopdf
 kwkhtmltopdf:
@@ -225,5 +230,5 @@ kwkhtmltopdf:
     - docker-compose -f kwkhtmltopdf-traefik.docker-compose.yml down
     - docker-compose -f kwkhtmltopdf-traefik.docker-compose.yml up -d
   when: manual
-  only:
-    - "{{ odoo_version }}"
+  rules:
+    - if: $IS_MR == null
