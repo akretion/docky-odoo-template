@@ -4,6 +4,7 @@ import requests
 import urllib
 
 FILES = [
+    ".editorconfig",
     ".pre-commit-config.yaml.jinja",
     ".pylintrc-mandatory.jinja",
     ".pylintrc.jinja",
