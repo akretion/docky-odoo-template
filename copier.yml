@@ -27,6 +27,13 @@ use_secret:
   type: bool
   help: generate docker-compose dedicate file for secret
 
+org_name:
+  type: str
+  default: Akretion
+  help:
+    Tell me the Organization name. It's supposed to be human-readable. It will be used
+    in the author key of the __manifest__ files.
+
 _skip_if_exists:
   - frozen.yaml
   - README.md # TODO how to manage readme ?

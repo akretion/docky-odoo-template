@@ -31,7 +31,10 @@ REPLACE_BLOCKS = {
           - --header
           - "# generated from manifests external_dependencies"
       {%- endif %}""", b""),
-    ]
+    ],
+    ".pylintrc-mandatory.jinja": [
+        (b"    translation-required,\n", b""),
+    ],
 }
 
 def update_content(filename, content):
