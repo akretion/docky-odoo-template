@@ -15,7 +15,7 @@ project_name:
   help: Project Name
 
 odoo_version:
-  type: str
+  type: float
   choices:
      - 16.0
      - 15.0
