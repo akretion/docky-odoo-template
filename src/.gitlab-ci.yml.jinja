@@ -9,14 +9,14 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       variables:
-        PIPELINE_NAME: 'MR pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "MR pipeline: $CI_COMMIT_BRANCH"
         IS_MR: "true"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       variables:
-        PIPELINE_NAME: 'default branch pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "default branch pipeline: $CI_COMMIT_BRANCH"
     - if: $CI_COMMIT_BRANCH == "{{ odoo_version }}"
       variables:
-        PIPELINE_NAME: '{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH"
 
 stages:
   - maintenance
