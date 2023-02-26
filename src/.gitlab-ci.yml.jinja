@@ -20,7 +20,7 @@ workflow:
 
 stages:
   - maintenance
-  # - lint
+  - lint
   - build
   - test
   - refresh
@@ -52,12 +52,11 @@ before_script:
   {% endif %}
 
 # Pre-commit lint
-# TODO integrate OCA linter before
-#lint:
-#  stage: lint
-#  script:
-#    - pre-commit install
-#    - pre-commit run --all --show-diff-on-failure --verbose --color always
+lint:
+  stage: lint
+  script:
+    - pre-commit install
+    - pre-commit run --all --show-diff-on-failure --verbose --color always
 
 # Build the container
 build:
