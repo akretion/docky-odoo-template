@@ -6,7 +6,7 @@ services:
     image: "${BUILD_NAME}"
     environment:
       ODOO_BASE_URL: https://${DOMAIN}
-      ODOO_REPORT_URL: http://ci-${BUILD_NAME}:8069
+      ODOO_REPORT_URL: http://${ENV}-${BUILD_NAME}:8069
       #SENTRY: True TODO FIXME
       PGSSLMODE: require
       PGDATABASE: $DB_NAME
