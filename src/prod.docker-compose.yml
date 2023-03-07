@@ -2,6 +2,7 @@ networks:
   local:
 services:
   kwkhtmltopdf:
+    restart: always
     image: acsone/kwkhtmltopdf
     networks:
       - local
