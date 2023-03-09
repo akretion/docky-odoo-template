@@ -58,9 +58,7 @@ services:
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
-      - ./backup:/backup
-      - ./shared:/shared
-      - ./.home:/home/odoo
+      - ./.home:/home/odoo # This directory is used for keeping the bash/psql history
   kwkhtmltopdf:
     image: acsone/kwkhtmltopdf
     networks:
