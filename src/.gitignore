@@ -3,3 +3,4 @@
 /data
 /secrets.docker-compose.yml
 /clear-*
+.home

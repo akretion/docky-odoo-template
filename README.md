@@ -101,3 +101,14 @@ server-brand:
         # - ak somebranch
 ```
 
+
+
+# Tips for the template maintenance
+
+## pre-commit
+
+Precommit file are extracted from the OCA project https://github.com/OCA/oca-addons-repo-template
+
+For updating the files you need to execute the file **update_oca_file.py**
+Then commit the updated files
+In case that oca have added files please update the script before

@@ -9,18 +9,18 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       variables:
-        PIPELINE_NAME: 'MR pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "MR pipeline: $CI_COMMIT_BRANCH"
         IS_MR: "true"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       variables:
-        PIPELINE_NAME: 'default branch pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "default branch pipeline: $CI_COMMIT_BRANCH"
     - if: $CI_COMMIT_BRANCH == "{{ odoo_version }}"
       variables:
-        PIPELINE_NAME: '{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH'
+        PIPELINE_NAME: "{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH"
 
 stages:
   - maintenance
-  # - lint
+  - lint
   - build
   - test
   - refresh
@@ -52,12 +52,20 @@ before_script:
   {% endif %}
 
 # Pre-commit lint
-# TODO integrate OCA linter before
-#lint:
-#  stage: lint
-#  script:
-#    - pre-commit install
-#    - pre-commit run --all --show-diff-on-failure --verbose --color always
+lint:
+  stage: lint
+  script:
+    - pre-commit install
+    - pre-commit run --all --show-diff-on-failure --verbose --color always
+
+lint-optional:
+  stage: lint
+  script:
+    - cp .pylintrc .pylintrc-mandatory
+    - git add .pylintrc-mandatory && git commit -m'tmp update mandatory'
+    - pre-commit install
+    - pre-commit run --all --show-diff-on-failure --verbose --color always
+  allow_failure: True
 
 # Build the container
 build:
