@@ -1,5 +1,6 @@
 services:
   kwkhtmltopdf:
+    restart: always
     image: acsone/kwkhtmltopdf
     container_name: "kwkhtmltopdf"
     networks:
