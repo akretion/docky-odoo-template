@@ -9,7 +9,7 @@ services:
     labels:
       - "docky.url_suffix=/?pgsql=db&username=odoo&db=db"
     environment:
-      - ADMINER_PLUGINS=tables-filter
+      - ADMINER_PLUGINS=json-column tables-filter
       - ADMINER_DESIGN=rmsoft
     links:
       - db
