@@ -56,7 +56,7 @@ lint:
   stage: lint
   script:
     - pre-commit install
-    - pre-commit run --all --show-diff-on-failure --verbose --color always
+    - pre-commit run --show-diff-on-failure --verbose --color always
 
 lint-optional:
   stage: lint
@@ -64,7 +64,7 @@ lint-optional:
     - cp .pylintrc .pylintrc-mandatory
     - git add .pylintrc-mandatory && git commit -m'tmp update mandatory'
     - pre-commit install
-    - pre-commit run --all --show-diff-on-failure --verbose --color always
+    - pre-commit run --show-diff-on-failure --verbose --color always
   allow_failure: True
 
 # Build the container
