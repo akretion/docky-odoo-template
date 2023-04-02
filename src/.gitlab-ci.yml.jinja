@@ -129,7 +129,8 @@ update_db:
     - export PGDATABASE=$BUILD_NAME
     - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
-    - docker-compose run odoo click-odoo-update
+    # Start and stop odoo, the entrypoint will run an update if needed
+    - docker-compose run odoo odoo --stop-after-init
   rules:
     # if emptydb tag is set this job will not run
     - if: $CI_MERGE_REQUEST_LABELS !~ /emptydb/
