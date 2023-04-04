@@ -6,6 +6,8 @@
 *.egg-info
 # emacs backup files
 *~
+# db files shouldn't be taken into account
+*.dump
 
 /repo.yaml
 /pip-selfcheck.json
