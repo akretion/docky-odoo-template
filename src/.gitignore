@@ -5,4 +5,3 @@
 /clear-*
 .home
 *.~lock*  # libreoffice may generate these files while opening file
-*.dump    # db files shouldn't be taken into account by git
