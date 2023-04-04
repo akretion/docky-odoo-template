@@ -20,7 +20,9 @@ workflow:
 
 stages:
   - maintenance
+{% if odoo_version >= 14.0 %}
   - lint
+{% endif %}
   - build
   - test
   - refresh
@@ -51,6 +53,7 @@ before_script:
   - sops -d ci.secrets.docker-compose.yml > secrets.docker-compose.yml
   {% endif %}
 
+{% if odoo_version >= 14.0 %}
 # Pre-commit lint
 lint:
   stage: lint
@@ -66,6 +69,7 @@ lint:
   parallel:
     matrix:
       - PYLINT: [optional, mandatory]
+{% endif %}
 
 # Build the container
 build:
