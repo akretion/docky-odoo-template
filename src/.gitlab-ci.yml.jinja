@@ -55,17 +55,17 @@ before_script:
 lint:
   stage: lint
   script:
+    - if [ $PYLINT == "optional" ]; then cp .pylintrc .pylintrc-mandatory && git add
+      .pylintrc-mandatory && git commit -m "tmp"; fi
     - pre-commit install
     - pre-commit run --all --show-diff-on-failure --verbose --color always
-
-lint-optional:
-  stage: lint
-  script:
-    - cp .pylintrc .pylintrc-mandatory
-    - git add .pylintrc-mandatory && git commit -m'tmp update mandatory'
-    - pre-commit install
-    - pre-commit run --all --show-diff-on-failure --verbose --color always
-  allow_failure: True
+  rules:
+    - if: $PYLINT == "mandatory"
+    - if: $PYLINT == "optional"
+      allow_failure: true
+  parallel:
+    matrix:
+      - PYLINT: [optional, mandatory]
 
 # Build the container
 build:
