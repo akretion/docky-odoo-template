@@ -11,16 +11,16 @@ import click
 
 @click.command()
 def main():
-    version = datetime.now().strftime("%y%m.%d.0")
+    version = datetime.now().strftime("{{ odoo_version }}.%y%m.%d.0")
     with open("odoo/local-src/custom_all/__manifest__.py") as f:
         data = ast.literal_eval(f.read())
     last_version = data["version"]
 
     # increment last digit if needed
     if last_version >= version:
-        year_month, day, inc = last_version.split(".")
+        odoo_version, zero, year_month, day, inc = last_version.split(".")
         inc = str(int(inc) + 1)
-        version = ".".join([year_month, day, inc])
+        version = ".".join([odoo_version, zero, year_month, day, inc])
 
     # increment modules versions
     for module_name in os.listdir("odoo/local-src"):
