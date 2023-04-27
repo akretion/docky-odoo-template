@@ -54,7 +54,10 @@ services:
       - local
       - traefik
     volumes:
-      - ./odoo:/odoo
+      - ./odoo/src:/odoo/src
+      - ./odoo/local-src:/odoo/local-src
+      - ./odoo/external-src:/odoo/external-src
+      - ./odoo/links:/odoo/links
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
