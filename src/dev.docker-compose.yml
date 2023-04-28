@@ -54,7 +54,15 @@ services:
       - local
       - traefik
     volumes:
-      - ./odoo:/odoo
+      - ./odoo/src:/odoo/src
+      - ./odoo/local-src:/odoo/local-src
+      - ./odoo/external-src:/odoo/external-src
+      - ./odoo/links:/odoo/links
+      - ./odoo/templates/:/odoo/templates
+      - ./odoo/start-entrypoint.d/:/odoo/start-entrypoint.d
+      - ./odoo/scripts:/odoo/scripts
+      - ./odoo/requirements.txt:/odoo/requirements.txt
+      - ./odoo/spec.yaml:/odoo/spec.yaml
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
