@@ -53,4 +53,11 @@ for filename in FILES:
     if res.status_code != 200:
         raise Exception(f"Fail to get file {url} response: {res.content}")
     content = update_content(filename, res.content)
+    if filename in [
+            ".pre-commit-config.yaml.jinja",
+            ".pylintrc.jinja",
+            ".pylintrc-mandatory.jinja",
+            ]:
+        filename = "{% if odoo_version >= 14 %}" + filename + "{% endif %}"
+
     open(f"src/{filename}", 'wb').write(content)
