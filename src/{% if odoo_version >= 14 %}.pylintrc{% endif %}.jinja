@@ -1,7 +1,7 @@
 {%- if odoo_version < 13 %}
   {%- include "version-specific/mqt-compat/.pylintrc.jinja" %}
 {%- else %}
-{% extends "src/.pylintrc-mandatory.jinja" %}
+{% extends "src/{% if odoo_version >= 14 %}.pylintrc-mandatory{% endif %}.jinja" %}
 {% block note %}
 # This .pylintrc contains optional AND mandatory checks and is meant to be
 # loaded in an IDE to have it check everything, in the hope this will make
