@@ -1,0 +1,13 @@
+github.com:
+  #  "my-private-repo":
+  #    orgs:
+  #      - akretion
+  #    private: True
+  "*":
+    orgs:
+      - odoo
+      - OCA
+      - acsone
+      - akretion
+      - camptocamp
+

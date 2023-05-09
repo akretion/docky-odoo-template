@@ -75,7 +75,9 @@ lint:
 build:
   stage: build
   script:
-    - docker-compose build --pull
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_ed25519
+    - docker compose build --pull --ssh default
 
 test:
   stage: test

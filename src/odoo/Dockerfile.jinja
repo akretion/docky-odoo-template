@@ -4,6 +4,12 @@ FROM ghcr.io/akretion/odoo-docker:{{ odoo_version }}-latest as base
 
 FROM base as prod
 
+# run keyscan for github (download public key) to not have to accept it manually
+RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+# Customize git autoshare repos config (and declare private repos)
+COPY ./.git_autoshare_repos.yaml /root/.config/git-autoshare/repos.yml
+
 # Build and install odoo
 COPY odoo-spec.yaml /odoo/odoo-spec.yaml
 ENV BUILD_RESTRICT_LANG=fr.po
@@ -13,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
 # Build external source
 COPY spec.yaml /odoo/spec.yaml
 COPY frozen.yaml /odoo/frozen.yaml
-RUN --mount=type=cache,target=/root/.cache /install/build-odoo-external
+RUN --mount=type=ssh --mount=type=cache,target=/root/.cache /install/build-odoo-external
 COPY ./requirements.txt /odoo/
 RUN --mount=type=cache,target=/root/.cache cd /odoo && pip install -r requirements.txt
 
