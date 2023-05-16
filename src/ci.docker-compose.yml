@@ -3,7 +3,7 @@ services:
     build:
       context: ./odoo
       target: prod
-    image: "${BUILD_NAME}"
+    image: "${IMAGE_NAME}"
     environment:
       ODOO_BASE_URL: https://${DOMAIN}
       ODOO_REPORT_URL: http://${ENV}-${BUILD_NAME}:8069

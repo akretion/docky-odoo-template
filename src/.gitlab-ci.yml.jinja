@@ -11,12 +11,20 @@ workflow:
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_COMMIT_BRANCH"
         IS_MR: "true"
+        ENV_NAME: "$CI_MERGE_REQUEST_IID"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       variables:
         PIPELINE_NAME: "default branch pipeline: $CI_COMMIT_BRANCH"
+        ENV_NAME: "preprod"
     - if: $CI_COMMIT_BRANCH == "{{ odoo_version }}"
       variables:
         PIPELINE_NAME: "{{ odoo_version }} branch pipeline: $CI_COMMIT_BRANCH"
+        ENV_NAME: "preprod"
+
+variables:
+  BUILD_NAME: "${CI_PROJECT_NAME}_${ENV_NAME}"
+  IMAGE_NAME: "$BUILD_NAME"
+  DOMAIN: "${BUILD_NAME}.${CI_DOMAIN}"
 
 stages:
   - maintenance
@@ -29,24 +37,20 @@ stages:
   - migrate
   - review
   - stop_review
-  - review_preprod
   - docker_push
   # - sentry
 
 before_script:
   - export DOCKER_BUILDKIT=1
+  - if [ -n "$NO_BUILD" ]; then export
+    IMAGE_NAME="$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"; fi
   - cp .env-ci .env
-  - export BUILD_NAME=${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID:-preprod}
-  - export CI_DOMAIN=${CI_DOMAIN}
   - |
     cat << EOF >> .env
     UID=`id -u`
-    BUILD_NAME=${BUILD_NAME}
-    DOMAIN=${BUILD_NAME}.${CI_DOMAIN}
+    DB_NAME=${BUILD_NAME}
     COMPOSE_PROJECT_NAME=${BUILD_NAME}
-    PGDATABASE=\${PGDATABASE:-$BUILD_NAME}
     ENCRYPTION_KEY_PREPROD=${ENCRYPTION_KEY_PREPROD}
-    ODOO_REPORT_URL=http://$BUILD_NAME:8069
     EOF
   - mkdir shared
   {% if use_secret %}
@@ -76,22 +80,32 @@ build:
   stage: build
   script:
     - docker-compose build --pull
+  rules:
+    # Do not run if $NO_BUILD var is defined
+    - if: $NO_BUILD == null
+
+# Pull the container image (instead of building it)
+pull:
+  stage: build
+  script:
+    - echo "pull image $IMAGE_NAME"
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker-compose pull
+  rules:
+    # Run pull only in $NO_BUILD context
+    - if: $NO_BUILD != null
 
 test:
   stage: test
   script:
-    - echo "DB_NAME=${BUILD_NAME}_test" >> .env
-    - export PGDATABASE="${BUILD_NAME}_test"
+    - export DB_NAME="${BUILD_NAME}_test"
     - docker-compose kill
-    - dropdb --force --if-exists ${BUILD_NAME}_test
-    - docker-compose run odoo initdb ${BUILD_NAME}_test --cache-prefix
-      ${CI_PROJECT_NAME:0:7}
+    - dropdb --force --if-exists ${DB_NAME}
+    - docker-compose run odoo initdb ${DB_NAME} --cache-prefix ${CI_PROJECT_NAME:0:7}
     - docker-compose run odoo runtests
   rules:
     # Run tests in MR if there is no Skiptest tag
     - if: $IS_MR == "true" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
-    # Always run test in default branch
-    - if: $IS_MR == null
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
@@ -141,8 +155,6 @@ update_db:
 init_db:
   stage: migrate
   script:
-    - export PGDATABASE=$BUILD_NAME
-    - echo "DB_NAME=$BUILD_NAME" >> .env
     - docker-compose kill
     - docker-compose run odoo odoo -i base --stop-after-init
     # advice: Instead of base, install a module that contains your dependencies
@@ -154,7 +166,6 @@ init_db:
 review:
   stage: review
   script:
-    - echo "DB_NAME=$BUILD_NAME" >> .env
     # TODO reimplement fetch mr env that do no depend on cidbservice
     #- ci-fetch-mr-environment
     #- source fetch-env.txt
@@ -162,39 +173,21 @@ review:
     - docker-compose kill
     - docker-compose up -d
   environment:
-    name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
-    url: https://${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}.${CI_DOMAIN}
+    name: test/${BUILD_NAME}
+    url: https://${DOMAIN}
     on_stop: stop_review
-  rules:
-    - if: $IS_MR == "true"
 
 # Stop the container used for the review
 stop_review:
   stage: review
   script:
     - docker-compose down --rmi local --volumes
-    - dropdb ${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID} --if-exist
-    - dropdb ${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}_test --if-exist
+    - dropdb ${BUILD_NAME} --if-exist
+    - dropdb ${BUILD_NAME}_test --if-exist
   environment:
-    name: test/${CI_PROJECT_NAME}_${CI_MERGE_REQUEST_IID}
+    name: test/${BUILD_NAME}
     action: stop
   when: manual
-  rules:
-    - if: $IS_MR == "true"
-
-# Start the preprod container
-review_preprod:
-  stage: review_preprod
-  script:
-    - echo "DB_NAME=$BUILD_NAME" >> .env
-    - echo "DOMAIN=${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}" >> .env
-    - docker-compose kill
-    - docker-compose up -d
-  environment:
-    name: preprod
-    url: https://${CI_PROJECT_NAME}_preprod.${CI_DOMAIN}
-  rules:
-    - if: $IS_MR == null
 
 # Send the docker image to the registry in order to be downloaded in prod
 docker_push:
@@ -202,12 +195,15 @@ docker_push:
   script:
     - export TAG="${CI_COMMIT_MESSAGE//Bump version /}"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:latest
-    - docker push $CI_REGISTRY_IMAGE:latest
+    - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     - docker tag $BUILD_NAME $CI_REGISTRY_IMAGE:$TAG
     - docker push $CI_REGISTRY_IMAGE:$TAG
   rules:
-    - if: $CI_COMMIT_TITLE =~ /^Bump version/ && $IS_MR == null
+    # Run only for Bump commits in default branch, does not run on sheduled/manually run pipelines
+    - if:
+        $CI_COMMIT_TITLE =~ /^Bump version/ && $IS_MR == null && $CI_PIPELINE_SOURCE ==
+        "push"
 
 # TODO rework on sentry maybe merge with bump ?
 #sentry:
