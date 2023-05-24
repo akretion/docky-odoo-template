@@ -51,15 +51,7 @@
   {%- set repo_rev.setuptools_odoo = "3.1.8" %}
 {%- endif %}
 
-{#- Older versions that differ a lot have their own hardcoded templates for readability #}
-{%- if odoo_version < 13 %}
-  {%- include "version-specific/mqt-compat/.pre-commit-config.yaml.jinja" %}
 
-{%- elif odoo_version < 14 %}
-  {%- include "version-specific/%s/.pre-commit-config.yaml.jinja" % odoo_version %}
-
-{#- Newer versions without hacks are rendered here directly #}
-{%- else %}
 exclude: |
   (?x)
   # NOT INSTALLABLE ADDONS
@@ -189,4 +181,3 @@ repos:
       - id: pylint_odoo
         args:
           - --rcfile=.pylintrc-mandatory
-{%- endif %}

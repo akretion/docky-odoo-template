@@ -31,9 +31,31 @@ REPLACE_BLOCKS = {
           - --header
           - "# generated from manifests external_dependencies"
       {%- endif %}""", b""),
+        (b"""{#- Older versions that differ a lot have their own hardcoded templates for readability #}
+{%- if odoo_version < 13 %}
+  {%- include "version-specific/mqt-compat/.pre-commit-config.yaml.jinja" %}
+
+{%- elif odoo_version < 14 %}
+  {%- include "version-specific/%s/.pre-commit-config.yaml.jinja" % odoo_version %}
+
+{#- Newer versions without hacks are rendered here directly #}
+{%- else %}""", b""),
+        (b"rcfile=.pylintrc-mandatory\n{%- endif %}", b"rcfile=.pylintrc-mandatory"),
     ],
     ".pylintrc-mandatory.jinja": [
         (b"    translation-required,\n", b""),
+        (b"""{%- if odoo_version < 13 %}
+  {%- include "version-specific/mqt-compat/.pylintrc-mandatory.jinja" %}
+{%- else %}\n""", b""),
+        (b"reports=no\n{%- endif %}", b"reports=no"),
+    ],
+    ".pylintrc.jinja": [
+        (b"""{%- if odoo_version < 13 %}
+  {%- include "version-specific/mqt-compat/.pylintrc.jinja" %}
+{%- else %}\n""", b""),
+        (b".pylintrc-mandatory.jinja",
+            b"{% if odoo_version >= 14 %}.pylintrc-mandatory{% endif %}.jinja"),
+        (b"{% endblock %}\n{%- endif %}", b"{% endblock %}"),
     ],
 }
 
@@ -58,6 +80,6 @@ for filename in FILES:
             ".pylintrc.jinja",
             ".pylintrc-mandatory.jinja",
             ]:
-        filename = "{% if odoo_version >= 14 %}" + filename + "{% endif %}"
+        filename = "{% if odoo_version >= 14 %}" + filename[:-6] + "{% endif %}.jinja"
 
     open(f"src/{filename}", 'wb').write(content)
