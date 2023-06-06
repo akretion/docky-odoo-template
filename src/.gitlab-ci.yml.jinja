@@ -188,6 +188,8 @@ stop_review:
     name: test/${BUILD_NAME}
     action: stop
   when: manual
+  # Do no require any artifact to run properly
+  dependencies: []
 
 # Send the docker image to the registry in order to be downloaded in prod
 docker_push:
