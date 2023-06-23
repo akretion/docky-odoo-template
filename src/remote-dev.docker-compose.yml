@@ -2,8 +2,6 @@ services:
   odoo:
     restart: always
     build: odoo # at term, CI should build it for us
-    environment:
-      - MARABUNTA_MODE=demo
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}.rule=Host(`${COMPOSE_PROJECT_NAME}.dev.akretion.com`)"

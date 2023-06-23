@@ -16,7 +16,6 @@ services:
       LIMIT_TIME_CPU: 4000
       LIMIT_TIME_REAL: 4800
       LIMIT_TIME_REAL_CRON: 4800
-      MARABUNTA_MODE: ${MARABUNTA_MODE:-prod}
       ODOO_REPORT_URL: http://odoo:8069
       #,queue_job,sentry?
       ODOO_QUEUE_JOB_CHANNELS:
