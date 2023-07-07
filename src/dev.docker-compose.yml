@@ -63,6 +63,7 @@ services:
       - ./odoo/scripts:/odoo/scripts
       - ./odoo/requirements.txt:/odoo/requirements.txt
       - ./odoo/spec.yaml:/odoo/spec.yaml
+      - ./odoo/pytest.ini:/odoo/pytest.ini
       - ./data/addons:/data/odoo/addons
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
