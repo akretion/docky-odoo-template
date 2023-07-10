@@ -31,4 +31,4 @@ COPY ./src /odoo/src
 RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
 COPY ./requirements.txt /odoo/
 RUN --mount=type=cache,target=/root/.cache pip install -r /odoo/requirements.txt
-RUN --mount=type=cache,target=/root/.cache pip install wdb
+{% if provide_web_debugger %}RUN --mount=type=cache,target=/root/.cache pip install wdb{% endif %}

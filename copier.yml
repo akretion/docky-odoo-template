@@ -29,6 +29,12 @@ use_secret:
   type: bool
   help: generate docker-compose dedicate file for secret
 
+provide_web_debugger:
+  type: bool
+  help:
+    Make it possible to activate/deactivate a web debugger for docker (WDB) in  dev 
+    environment
+
 org_name:
   type: str
   default: Akretion
