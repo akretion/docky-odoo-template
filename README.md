@@ -2,12 +2,11 @@
 
 This repo contains all the basic files needed to create an Odoo project from scratch using the [docky](https://github.com/akretion/docky) and [ak](https://github.com/akretion/ak) command-line tools developed by [Akretion](https://akretion.com).
 
-To start a new Odoo project, you don't need to download this repo anymore :
+To start a new Odoo project, you don't need to download this repo anymore:
 
-1. First install to [docky](https://github.com/akretion/docky) (version > 8.0.0), [copier](https://github.com/copier-org/copier) and [ak](https://github.com/akretion/ak)
+1. First install [docky](https://github.com/akretion/docky) (version > 8.0.0), [copier](https://github.com/copier-org/copier) and [ak](https://github.com/akretion/ak)
 
-
-For that we deeply recommand you to install them with [pipx](https://github.com/pypa/pipx)
+For that we strongly recommend you to install them with [pipx](https://github.com/pypa/pipx)
 
 ```
 pipx install docky
@@ -15,17 +14,22 @@ pipx install copier
 pipx install git+https://github.com/akretion/ak.git@master
 ```
 
-2. Create en *empty folder* for your Odoo projet and run `copier copy` in it
+2. Create the project directory from a template with `copier copy`. For instance:
+
 ```
 copier copy https://github.com/akretion/docky-odoo-template my-odoo-project
 ```
 
-3. create the ".env" file
+(you will then be asked to choose an Odoo version by copier).
 
-you can copy the ".env-sample" to ".env" and update enviroment variable if needed
+3. Create the ".env" file
+
+You can copy the ".env-sample" to ".env" and update enviroment variable if needed
 
 
 4. Download the Odoo source code and other external modules specified in the [spec.yaml](odoo/spec.yaml) and [odoo-spec.yaml](odoo/odoo-spec.yaml) file using `ak build` from the spec.yaml's folder
+
+
 ```
 cd odoo
 ak build -c odoo-spec.yaml
@@ -52,10 +56,9 @@ More information on : [docky](https://github.com/akretion/docky).
 # Bump and Migration
 
 When creating migration script (pre, post...) you can name the directory "0.0.0"
-Indeed Odoo always run migration script with the version "0.0.0" so you can use this as
-"current" migration script for your PR.
-Then when you will run the cmd "./bump" it will set the right version number.
-
+Indeed Odoo will always run migration script with the version "0.0.0" so you can use this as
+the "current" migration script for your PR.
+Then whenever you will run the cmd "./bump" it will set the right version number.
 
 
 # Spec Tips (TODO move in ak doc ?)
@@ -71,7 +74,7 @@ server-auth:
     - auth_oidc
   src: https://github.com/OCA/server-auth 14.0
 
-# Recommanded way: prefer short syntax without merges
+# Recommended way: prefer short syntax without merges
 # all stable modules from main branch
 server-tools:
   modules:
@@ -102,13 +105,12 @@ server-brand:
 ```
 
 
-
 # Tips for the template maintenance
 
 ## pre-commit
 
 Precommit file are extracted from the OCA project https://github.com/OCA/oca-addons-repo-template
 
-For updating the files you need to execute the file **update_oca_file.py**
-Then commit the updated files
-In case that oca have added files please update the script before
+For updating the files you need to execute the file **update_oca_file.py**.
+Then commit the updated files.
+If files were added in the OCA, please update the script before.
