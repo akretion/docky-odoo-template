@@ -29,6 +29,7 @@ services:
       WITHOUT_DEMO: "False"
       WORKERS: 0
       ODOO_REPORT_URL: http://odoo:8069
+      SERVER_WIDE_MODULES: base,web,web_responsive
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
