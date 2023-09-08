@@ -1,0 +1,20 @@
+# just aggregate this file name in COMPOSE_FILE key in .env file if you need this feature
+version: "3.7"
+services:
+  odoo:
+    environment:
+      WDB_SOCKET_SERVER: wdb
+      WDB_NO_BROWSER_AUTO_OPEN: "True"
+    links:
+      - wdb
+  wdb:
+    image: yajo/wdb-server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-wdb.rule=Host(`${COMPOSE_PROJECT_NAME}-wdb.localhost`)"
+      - "docky.help=http://${COMPOSE_PROJECT_NAME}-wdb.localhost"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}wdbheaders.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-wdb.middlewares=${COMPOSE_PROJECT_NAME}wdbheaders"
+    networks:
+      - traefik
