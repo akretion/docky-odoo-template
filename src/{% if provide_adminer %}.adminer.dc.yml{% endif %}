@@ -1,0 +1,22 @@
+version: "3.7"
+services:
+  odoo:
+    links:
+      - adminer
+  adminer:
+    image: adminer
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.rule=Host(`${COMPOSE_PROJECT_NAME}-adminer.localhost`)"
+      - "docky.help=http://${COMPOSE_PROJECT_NAME}-adminer.localhost/?pgsql=db&username=odoo&db=db"
+      - "traefik.http.middlewares.${COMPOSE_PROJECT_NAME}adminerheaders.headers.customrequestheaders.X-Forwarded-Proto=http"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}-adminer.middlewares=${COMPOSE_PROJECT_NAME}adminerheaders"
+    environment:
+      - ADMINER_PLUGINS=json-column tables-filter
+      - ADMINER_DESIGN=rmsoft
+    links:
+      - db
+    networks:
+      - local
+      - traefik

@@ -35,6 +35,11 @@ provide_web_debugger:
     Make it possible to activate/deactivate a web debugger for docker (WDB) in  dev 
     environment
 
+provide_adminer:
+  type: bool
+  help:
+    Allow to use https://www.adminer.org to manage db data
+
 org_name:
   type: str
   default: Akretion
