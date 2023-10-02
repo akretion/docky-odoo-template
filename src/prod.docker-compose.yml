@@ -19,7 +19,7 @@ services:
       ODOO_BASE_URL: TODO
       PGSSLMODE: require
       RUNNING_ENV: prod
-      SENTRY: True
+      SENTRY: "True"
     volumes:
       - ~/data/${COMPOSE_PROJECT_NAME}/addons:/data/odoo/addons
       - ~/data/${COMPOSE_PROJECT_NAME}/filestore:/data/odoo/filestore
