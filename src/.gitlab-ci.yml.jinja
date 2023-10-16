@@ -106,8 +106,9 @@ test:
   rules:
     # Run tests in MR if there is no Skiptest tag
     - if: $IS_MR == "true" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
-    # Always run test in default branch
-    - if: $IS_MR == null
+    # Always run test in default branch except on bump commit
+    - if: $IS_MR == null && $CI_COMMIT_TITLE !~ /^Bump version/
+
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
     reports:
