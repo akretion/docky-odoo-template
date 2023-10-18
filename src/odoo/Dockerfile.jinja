@@ -27,7 +27,13 @@ COPY ./scripts /odoo/scripts
 
 FROM base as dev
 
-COPY ./src /odoo/src
+# the following copy just enough metadata to get pip install -e /odoo/src to run:
+COPY ./src/requirements.txt /odoo/src/requirements.txt
+COPY ./src/setup.cfg /odoo/src/setup.cfg
+COPY ./src/setup.py /odoo/src/setup.py
+COPY ./src/setup /odoo/src/setup
+COPY ./src/odoo/release.py /odoo/src/odoo/release.py
+
 RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
 COPY ./requirements.txt /odoo/
 RUN --mount=type=cache,target=/root/.cache pip install -r /odoo/requirements.txt
