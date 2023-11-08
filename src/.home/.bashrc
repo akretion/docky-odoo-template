@@ -94,6 +94,16 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
+# alias for docky : common ak usage != .bash_aliases where are personal ones
+# with absolute path you can use anywhere
+alias cde='cd /odoo/external-src'
+alias cdli='cd /odoo/links'
+alias cdlo='cd /odoo/local-src'
+alias cdm='cd /odoo/local-src/custom_all/migrations'
+alias cdo='cd /odoo'
+alias cds='cd /odoo/src'
+alias cdsc='cd /odoo/scripts'
+
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
