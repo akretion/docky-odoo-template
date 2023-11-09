@@ -94,6 +94,8 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
+##### begin Akretion #####
+
 # alias for docky : common ak usage != .bash_aliases where are personal ones
 # with absolute path you can use anywhere
 alias cde='cd /odoo/external-src'
@@ -103,6 +105,15 @@ alias cdm='cd /odoo/local-src/custom_all/migrations'
 alias cdo='cd /odoo'
 alias cds='cd /odoo/src'
 alias cdsc='cd /odoo/scripts'
+
+#alias for click-odoo
+alias coc='click-odoo-copydb'
+alias cod='click-odoo-dropdb'
+alias com='click-odoo-makepot'
+alias cou='click-odoo-udate'
+alias coun='click-odoo-uninstall'
+
+##### end Akretion #####
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
