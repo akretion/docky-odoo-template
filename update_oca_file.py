@@ -9,9 +9,9 @@ FILES = [
     ".pylintrc-mandatory.jinja",
     ".pylintrc.jinja",
     "{% if odoo_version > 12 %}.eslintrc.yml{% endif %}",
-    "{% if odoo_version > 12 %}.isort.cfg{% endif %}",
+    "{% if odoo_version > 12 and not use_ruff %}.isort.cfg{% endif %}",
     "{% if odoo_version > 12 %}.prettierrc.yml{% endif %}",
-    "{% if odoo_version >= 13 %}.flake8{% endif %}",
+    "{% if odoo_version < 13 %}.flake8{% endif %}.jinja",
 ]
 
 base_url = "https://raw.githubusercontent.com/OCA/oca-addons-repo-template/master/src/"
