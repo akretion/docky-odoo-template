@@ -19,7 +19,7 @@ python-jose[cryptography] # auth_oidc
 #phonenumbers # used by odoo on parthers - usefull ?
 #python-barcode # for barcodes_generator_*"
 #xlsxwriter # for report xlsx
-#xlrd # for report xlsx
+#xlrd==1.2.0  # for report xlsx, pinned version up to 17.0 at least
 #python-stdnum>=1.16 # for intrastat_product
 #stripe
 #marshmallow # datamodel
