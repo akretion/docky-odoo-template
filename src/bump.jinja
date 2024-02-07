@@ -2,11 +2,31 @@
 # pylint: disable=print-used
 
 import ast
+import logging
 import os
 import subprocess
 from datetime import datetime
 
 import click
+
+_logger = logging.getLogger(__name__)
+
+
+def check_output(cmd, cwd, log_error=True):
+    cp = subprocess.run(
+        cmd,
+        universal_newlines=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        cwd=cwd,
+    )
+    if cp.returncode and log_error:
+        _logger.error(
+            f"command {cp.args} failed with return code {cp.returncode} "
+            f"and output:\n{cp.stdout}"
+        )
+    cp.check_returncode()
+    return cp.stdout
 
 
 @click.command()
@@ -29,6 +49,13 @@ def main():
         # Check if it's an odoo module
         if os.path.exists(manifest_path):
             update_version = False
+
+            diffs = check_output(
+                cmd=["git", "diff", "--name-only", "HEAD", last_version], cwd="."
+            )
+            if module_path + "/" in diffs:
+                update_version = True
+
             # in case of pending migration script increment it
             if os.path.exists(f"{module_path}/migrations/0.0.0"):
                 subprocess.run(
@@ -40,6 +67,7 @@ def main():
                     check=True,
                 )
                 update_version = True
+
             if update_version or module_name == "custom_all":
                 print(f"Update version of {module_name} to {version}")
                 with open(manifest_path) as f:
