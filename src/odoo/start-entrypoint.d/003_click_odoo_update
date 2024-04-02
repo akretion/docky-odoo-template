@@ -12,5 +12,7 @@ then
     exit 0
 fi
 
-echo "START UPDATING USING CLICK ODOO"
-click-odoo-update --i18n-overwrite
+echo "START UPDATING USING MIGRATE"
+# Migrate is an improved version of click odoo update
+# see here : https://github.com/akretion/odoo-docker/blob/master/bin/migrate
+migrate --i18n-overwrite
