@@ -8,11 +8,12 @@ from datetime import datetime
 
 import click
 
+ODOO_VERSION = "{{ odoo_version }}"
 
 @click.command()
 def main():
     subprocess.run("git pull", shell=True, check=True)
-    version = datetime.now().strftime("{{ odoo_version }}.%y%m.%d.0")
+    version = datetime.now().strftime(f"{ODOO_VERSION}.%y%m.%d.0")
     with open("odoo/local-src/custom_all/__manifest__.py") as f:
         data = ast.literal_eval(f.read())
     last_version = data["version"]
@@ -33,8 +34,13 @@ def main():
             # in case of pending migration script increment it
             if os.path.exists(f"{module_path}/migrations/0.0.0"):
                 subprocess.run(
+                    f"mkdir {module_path}/migrations/{version}",
+                    shell=True,
+                    check=True,
+                )
+                subprocess.run(
                     (
-                        f"git mv {module_path}/migrations/0.0.0 "
+                        f"git mv {module_path}/migrations/0.0.0/* "
                         f"{module_path}/migrations/{version}"
                     ),
                     shell=True,
@@ -54,7 +60,7 @@ def main():
     subprocess.run(f"git commit -m'Bump version {version}'", shell=True, check=True)
     subprocess.run(f"git tag {version}", shell=True, check=True)
     subprocess.run("git push origin --tag", shell=True, check=True)
-    subprocess.run("git push origin {{ odoo_version }}", shell=True, check=True)
+    subprocess.run(f"git push origin {ODOO_VERSION}", shell=True, check=True)
 
 
 if __name__ == "__main__":
