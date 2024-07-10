@@ -4,7 +4,7 @@ services:
     links:
       - adminer
   adminer:
-    image: adminer
+    image: ghcr.io/shyim/adminerevo:latest
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
