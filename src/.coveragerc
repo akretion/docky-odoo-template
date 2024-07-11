@@ -1,0 +1,10 @@
+[run]
+branch = True
+relative_files = True
+
+[report]
+ignore_errors = True
+omit = */migrations/*
+    */__manifest__.py
+    */__init__.py
+    */tests/*
