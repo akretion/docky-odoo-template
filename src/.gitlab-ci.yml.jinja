@@ -103,6 +103,10 @@ test:
     - dropdb --force --if-exists ${DB_NAME}
     - docker-compose run odoo initdb ${DB_NAME} --cache-prefix ${CI_PROJECT_NAME:0:7}
     - docker-compose run odoo runtests
+    - sed -i "s=<source></source>=<source>/home/gitlab-runner/builds</source>=g"
+      shared/coverage.xml
+    - sed -i "s=/odoo/local-src=${CI_PROJECT_DIR}/odoo/local-src=g" shared/coverage.xml
+    - sed -i "s=/home/gitlab-runner/builds/=builds/=g" shared/coverage.xml
   rules:
     # Run tests in MR if there is no Skiptest tag
     - if: $IS_MR == "true" && $CI_MERGE_REQUEST_LABELS !~ /Skiptest/
@@ -111,6 +115,7 @@ test:
 
   coverage: '/(?i)total.*? (100(?:\.0+)?\%|[1-9]?\d(?:\.\d+)?\%)$/'
   artifacts:
+    when: always
     reports:
       coverage_report:
         coverage_format: cobertura

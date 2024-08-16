@@ -39,6 +39,10 @@ services:
       - type: bind
         source: ./shared
         target: /shared
+      - type: bind
+        source: ./.coveragerc
+        target: /shared/.coveragerc
+
 volumes:
   filestore:
 networks:
