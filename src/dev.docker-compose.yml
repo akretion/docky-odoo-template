@@ -68,6 +68,8 @@ services:
       - ./data/filestore:/data/odoo/filestore
       - ./data/sessions:/data/odoo/sessions
       - ./.home:/home/odoo # This directory is used for keeping the bash/psql history
+      - ./.odoo_autocompletion.sh:/home/odoo/.odoo_autocompletion.sh
+      - ./.bashrc.template:/home/odoo/.bashrc
   kwkhtmltopdf:
     image: acsone/kwkhtmltopdf
     networks:
