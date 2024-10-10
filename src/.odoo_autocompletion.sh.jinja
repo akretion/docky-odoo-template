@@ -1,0 +1,140 @@
+#!/bin/bash
+
+MODULE_CACHE=""
+_module_names_completion() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [ -z "$ADDONS_PATH" ]; then
+        return 1
+    fi
+
+    if [ -z "$MODULE_CACHE" ]; then
+        IFS=',' read -ra ADDON_DIRS <<< "$ADDONS_PATH"
+        local modules=""
+        for dir in "${ADDON_DIRS[@]}"; do
+            if [ -d "$dir" ]; then
+                modules+=$(ls -d "$dir"/*/ | xargs -n 1 basename | tr '\n' ' ')
+            fi
+        done
+        MODULE_CACHE="$modules"
+    fi
+
+    if [[ "$prev" == "-i" || "$prev" == "-u" ]]; then
+        COMPREPLY=( $(compgen -W "$MODULE_CACHE" -- "$cur") )
+        return 0
+    fi
+
+    return 0
+}
+
+_odoo_options_completion() {
+    local cur prev opts
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    # List of general options for Odoo command for version 14
+    # and 16. It s freeze because the options are not
+    # changing often. If you are using a different version of
+    # Odoo, you can update the list of options (see v16 example bellow)
+    # by running the command `odoo --help` and update the list of options, or launch:
+    # echo "complete -W '`/env/bin/odoo --help | \
+    # sed -e 's/[^a-z_-]\(-\+[a-z0-9_-]\+\)/\n\1\n/' | \
+    # grep -- '^-' | sort | uniq | tr '\n' ' '`' odoo" >> ~/.bash_completion
+    # like suggested here : https://www.odoo.com/documentation/18.0/developer/reference/cli.html
+    opts="--addons-path
+    --data-dir
+    --database
+    --db-filter
+    --db-template
+    --db_host
+    --db_maxconn
+    --db_port
+    --db_sslmode
+    --dev
+    --email-from
+    --from-filter
+    --geoip-db
+    --gevent-port
+    --http-interface
+    --i18n-export
+    --i18n-import
+    --i18n-overwrite
+    --import-partial
+    --limit-memory-hard
+    --limit-memory-soft
+    --limit-request
+    --limit-time-cpu
+    --limit-time-real
+    --limit-time-real-cron
+    --load
+    --load-language
+    --log-db
+    --log-db-level
+    --log-handler
+    --log-level
+    --log-sql
+    --log-web
+    --logfile
+    --longpolling-port
+    --max-cron-threads
+    --modules
+    --no-database-list
+    --no-http
+    --osv-memory-age-limit
+    --osv-memory-count-limit
+    --pg_path
+    --pidfile
+    --proxy-mode
+    --screencasts
+    --screenshots
+    --shell-interface
+    --smtp
+    --smtp-password
+    --smtp-port
+    --smtp-ssl
+    --smtp-ssl-certificate-filename
+    --smtp-ssl-private-key-filename
+    --smtp-user
+    --stop-after-init
+    --syslog
+    --test-enable
+    --test-file
+    --test-tags
+    --transient-age-limit
+    --unaccent
+    --upgrade-path
+    --version
+    --without-demo
+    --workers
+    --x-sendfile
+    -c
+    -d
+    -h
+    -i
+    -l
+    -p
+    -r
+    -s
+    -u
+    -w"
+
+    opts="$opts{% if odoo_version | float >= 16.0 %} --log-request --log-response{% endif %}"
+
+    COMPREPLY=( $(compgen -W "$opts" -- "$cur") )
+}
+
+_complete_odoo() {
+    local cur prev
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    if [[ "$prev" == "-i" || "$prev" == "-u" ]]; then
+        _module_names_completion
+    else
+        _odoo_options_completion
+    fi
+}
+
+complete -F _complete_odoo odoo
