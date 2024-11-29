@@ -1,3 +1,11 @@
+FROM ghcr.io/akretion/odoo-docker-builder:{{ odoo_version }}-latest as odoo-builder
+COPY odoo-spec.yaml /odoo/odoo-spec.yaml
+COPY odoo-frozen.yaml /odoo/odoo-frozen.yaml
+WORKDIR /odoo
+ENV BUILD_RESTRICT_LANG=fr.po
+RUN --mount=type=cache,target=/root/.cache /install/build-odoo
+
+
 FROM ghcr.io/akretion/odoo-docker:{{ odoo_version }}-latest as base
 
 # syntax = docker/dockerfile:1.4
@@ -5,9 +13,7 @@ FROM ghcr.io/akretion/odoo-docker:{{ odoo_version }}-latest as base
 FROM base as prod
 
 # Build and install odoo
-COPY odoo-spec.yaml /odoo/odoo-spec.yaml
-ENV BUILD_RESTRICT_LANG=fr.po
-RUN --mount=type=cache,target=/root/.cache /install/build-odoo
+COPY --from=odoo-builder /odoo/src /odoo/src
 RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
 
 # Build external source
