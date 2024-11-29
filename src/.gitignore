@@ -3,5 +3,6 @@
 /data
 /secrets.docker-compose.yml
 /clear-*
-.home
+.home/.bash_history
+.home/.psql_history
 *.~lock*  # libreoffice may generate these files while opening file
