@@ -1,8 +1,8 @@
-FROM ghcr.io/akretion/odoo-docker:{{ odoo_version }}-latest as base
+FROM ghcr.io/akretion/odoo-docker:{{ odoo_version }}-latest AS base
 
 # syntax = docker/dockerfile:1.4
 
-FROM base as prod
+FROM base AS prod
 
 # Build and install odoo
 COPY odoo-spec.yaml /odoo/odoo-spec.yaml
@@ -25,7 +25,7 @@ COPY ./start-entrypoint.d /odoo/start-entrypoint.d
 COPY ./local-src /odoo/local-src
 COPY ./scripts /odoo/scripts
 
-FROM base as dev
+FROM base AS dev
 
 COPY ./src /odoo/src
 RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
