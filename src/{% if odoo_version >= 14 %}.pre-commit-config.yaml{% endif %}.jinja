@@ -67,7 +67,9 @@ exclude: |
   # Repos using Sphinx to generate docs don't need prettying
   ^docs/_templates/.*\.html$|
   # You don't usually want a bot to modify your legal texts
-  (LICENSE.*|COPYING.*)
+  (LICENSE.*|COPYING.*)|
+  # Avoid frozen which is auto-generated
+  /frozen.yaml
 default_language_version:
   python: python3
   node: "{{ repo_rev.nodejs }}"
