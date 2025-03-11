@@ -10,7 +10,7 @@ services:
     restart: always
     image: TODO
     environment:
-      PGDATABASE: $DB_NAME
+      PGDATABASE: $PGDATABASE
       PGHOST: $PGHOST
       PGPASSWORD: $PGPASSWORD
       PGUSER: $PGUSER
