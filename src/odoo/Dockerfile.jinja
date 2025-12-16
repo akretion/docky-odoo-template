@@ -8,7 +8,7 @@ FROM base AS prod
 COPY odoo-spec.yaml /odoo/odoo-spec.yaml
 ENV BUILD_RESTRICT_LANG=fr.po
 RUN --mount=type=cache,target=/root/.cache /install/build-odoo
-RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
+RUN --mount=type=cache,target=/root/.cache pip install --config-setting editable_mode=compat -e /odoo/src
 
 # Build external source
 COPY spec.yaml /odoo/spec.yaml
@@ -28,7 +28,7 @@ COPY ./scripts /odoo/scripts
 FROM base AS dev
 
 COPY ./src /odoo/src
-RUN --mount=type=cache,target=/root/.cache pip install -e /odoo/src
+RUN --mount=type=cache,target=/root/.cache pip install --config-setting editable_mode=compat -e /odoo/src
 COPY ./requirements.txt /odoo/
 RUN --mount=type=cache,target=/root/.cache pip install -r /odoo/requirements.txt
 {% if provide_web_debugger %}RUN --mount=type=cache,target=/root/.cache pip install wdb{% endif %}
